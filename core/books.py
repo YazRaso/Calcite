@@ -1,6 +1,7 @@
 from openpyxl import Workbook, load_workbook
 from pathlib import Path
-from receipt import generate_receipt
+from .receipt import generate_receipt
+from PySide6.QtCore import QObject, Signal
 
 
 class ExcelManager:
@@ -16,11 +17,13 @@ class ExcelManager:
         delete_transaction(): Deletes a transaction from the Excel workbook.
         check_summary(): checks if the workbook has a summary row
     """
+    error_occurred = Signal(str)
     def __init__(self, filepath: str) -> None:
         """
         Initializes the Excel workbook, with a given filepath.
         :param filepath (str): Path to the Excel workbook:
         """
+        super().__init__()
         self.filepath = Path(filepath)
         self.headers = ['Amount', 'Currency',
                         'Conversion Rate', 'Transaction ID',
@@ -106,12 +109,23 @@ class ExcelManager:
                 return True
         return False
 
-    def generate_receipt(self):
+    def generate_receipt(self) -> None:
         last_row = self.ws.max_row  # 1 based index of latest transaction
+        if last_row <= 1:
+            return
+        if self.check_summary():
+            last_row -= 1
         amount = self.ws.cell(row=last_row, column=1).value
         currency = self.ws.cell(row=last_row, column=2).value
         transaction_date = self.ws.cell(row=last_row, column=5).value
         reference_id = self.ws.cell(row=last_row, column=6).value
+        if None in (amount, currency, transaction_date, reference_id):
+            missing_fields = [name for val, name in zip(
+                (amount, currency, transaction_date, reference_id),
+                ('Amount', 'Currency', 'Transaction ID', 'Transaction Date')
+            ) if val is None]
+            self.error_occurred.emit(f"Missing data in the transaction: {', '.join(missing_fields)}")
+            return
         generate_receipt(reference_no=reference_id, amount_paid=amount, currency=currency,
                          date_str=transaction_date)
 

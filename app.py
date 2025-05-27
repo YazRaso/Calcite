@@ -1,14 +1,14 @@
-from .utils.core_server import start_core_server
-from .utils.actions_server import start_action_server, check_health
+from utils.core_server import start_core_server
+from utils.actions_server import start_action_server, check_health
 import requests
-from .utils.kill_port import port_killer
+from utils.kill_port import port_killer
 import os
 import sys
 import json
 from pathlib import Path
 import platform
 import subprocess
-from .core.books import ExcelManager
+from core.books import ExcelManager
 from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, QTimer
 from PySide6.QtGui import QFont, QMovie, QFontDatabase  # Added QFontDatabase
 from PySide6.QtWidgets import (
@@ -524,6 +524,9 @@ class AccountingAssistantUI(QMainWindow):
                     self.loading_movie.state() != QMovie.MovieState.Running:
                 self.loading_movie.start()
 
+    def show_error_message(self, message: str):
+        QMessageBox.critical(self, "Error", message)
+
     def create_landing_page(self):
         self.landing_page = QWidget()
         layout = QVBoxLayout(self.landing_page)
@@ -778,7 +781,6 @@ class AccountingAssistantUI(QMainWindow):
                 """)
                 self.proceed_button.setEnabled(True)
                 self.output_text.clear()
-                #todo
             else:
                 self.selected_file_path = ""
                 self.selected_file_label.setText("No spreadsheet loaded.")
@@ -814,6 +816,7 @@ class AccountingAssistantUI(QMainWindow):
             self.output_text.append("----------------------------------------")
             return
         self.wb = ExcelManager(self.selected_file_path)
+        self.wb.error_occurred.connect(self.show_error_message)
         self.wb.generate_receipt()
         self.output_text.append(f"Receipts saved in: {Path('receipts').resolve()}")
         self.output_text.append("----------------------------------------")
