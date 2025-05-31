@@ -1,7 +1,7 @@
 from rasa_sdk import Action, Tracker
 from typing import Any, Dict
-import books
-import id_generator
+import app.core.books as books
+import app.core.id_generator as id_generator
 
 
 class AddTransaction(Action):

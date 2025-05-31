@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 from src.core.books import ExcelManager
 import tempfile
-import os
 
 
 @pytest.fixture

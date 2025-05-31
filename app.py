@@ -846,11 +846,6 @@ if __name__ == "__main__":
     # font_dir_path = QDir.appDirPath() + "/fonts/ttf/"
 
     font_dir = QDir(font_dir_path)
-    if not font_dir.exists():
-        print(f"Warning: Font directory does not exist: {font_dir_path}")
-        print("Ensure your 'fonts/ttf' directory is correctly placed relative to your script or executable.")
-    else:
-        print(f"Attempting to load fonts from: {font_dir_path}")
 
     loaded_font_families = []
     for font_file in font_dir.entryList(["*.ttf", "*.otf"], QDir.Filter.Files): # Also check for .otf
@@ -859,27 +854,7 @@ if __name__ == "__main__":
         if font_id != -1:
             font_families_for_id = QFontDatabase.applicationFontFamilies(font_id)
             if font_families_for_id:
-                print(f"Successfully loaded: {font_file} (ID: {font_id}) -> Families: {font_families_for_id}")
                 loaded_font_families.extend(font_families_for_id)
-            else:
-                print(f"Warning: Loaded {font_file} (ID: {font_id}) but no font families found by QFontDatabase.")
-        else:
-            print(f"Warning: Failed to load font: {font_path}")
-
-    # Verify if "JetBrains Mono" was loaded and is available
-    if FUTURISTIC_FONT_FAMILY not in loaded_font_families and loaded_font_families:
-        print(f"Warning: '{FUTURISTIC_FONT_FAMILY}' not found in loaded families: {list(set(loaded_font_families))}")
-        print(f"Consider updating FUTURISTIC_FONT_FAMILY at the top of the script to one of the detected names if available.")
-        # Optionally, pick the first loaded JetBrains-like font if any
-        # for family in loaded_font_families:
-        #     if "jetbrains" in family.lower() or "mono" in family.lower():
-        #         print(f"Suggestion: Try setting FUTURISTIC_FONT_FAMILY = \"{family}\"")
-        #         break
-    elif not loaded_font_families:
-        print("No custom fonts were loaded. Application will rely on system fonts.")
-    else:
-        print(f"'{FUTURISTIC_FONT_FAMILY}' is available from custom loaded fonts.")
-    # --- End of font loading ---
 
     # Set the global application font AFTER loading custom fonts
     # and potentially adjusting FUTURISTIC_FONT_FAMILY based on diagnostic prints.
