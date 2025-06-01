@@ -1,0 +1,18 @@
+FROM rasa/rasa:3.6.20
+ENV APP_BASE=/opt/rasa_project
+ENV APP_HOME=${APP_BASE}/app
+USER root
+RUN mkdir -p ${APP_HOME}
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONPATH "${PYTHONPATH}:${APP_BASE}"
+COPY . ${APP_HOME}
+WORKDIR ${APP_BASE}
+RUN if [ -f "${APP_HOME}/bot/actions/requirements_core.txt" ]; then \
+      echo "Found ${APP_HOME}/bot/actions/requirements_core.txt, installing dependencies..." && \
+      apt-get update && apt-get install -y git && \
+      pip install --no-cache-dir --upgrade pip && \
+      pip install --no-cache-dir -r "${APP_HOME}/bot/actions/requirements_core.txt"; \
+    else \
+      echo "${APP_HOME}/bot/actions/requirements_core.txt not found, skipping pip install."; \
+    fi
+EXPOSE 5005
