@@ -34,7 +34,7 @@ if ! systemctl is-active --quiet docker; then
 fi
 
 # Navigate to project directory
-cd Calcite/docker || { echo "Project directory not found"; exit 11; }
+cd ../docker || { echo "Project directory not found"; exit 11; }
 
 # Start containers
 docker-compose up -d || { echo "Failed to start containers"; exit 12; }
