@@ -1,0 +1,74 @@
+version: "3.1"
+intents:
+  - add_transaction
+  - delete_transaction
+  - simple_action
+entities:
+  - date
+  - amount
+  - currency
+  - conversion_rate
+  - file_path
+  - reference_id
+slots:
+  # Notice that I have made all slot mappings from_entity
+  # Slots are how we get the arguments for our methods
+  date:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: date
+  amount:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: amount
+  currency:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: currency
+  conversion_rate:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: conversion_rate
+  file_path:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: file_path
+  reference_id:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: reference_id
+actions:
+  - add_transaction
+  - delete_transaction
+forms:
+  add_transaction_form:
+    # if a slot is not filled, the system will prompt it for the slot
+    required_slots:
+    - date
+    - amount
+    - currency
+    - conversion_rate
+    - file_path
+    - reference_id
+  delete_transaction_form:
+    required_slots:
+      - file_path
+      - reference_id
+flows:
+  add_transaction:
+    description: "Adds a transaction to the active workbook"
+    steps:
+      - action: add_transaction
+  delete_transaction:
+    description: "Deletes a transaction with a given ID to the active workbook"
+    steps:
+      - action: delete_transaction
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

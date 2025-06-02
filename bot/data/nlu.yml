@@ -1,0 +1,112 @@
+version: "3.1"
+
+nlu:
+- regex: file_path
+  examples: |
+    - (?<=EXCEL_FILE_PATH:)[^\s]+
+- regex: reference_id
+  examples: |
+    - (?<=reference)[^\s]+
+
+- synonym: IRR
+  examples: |
+    - Rials
+    - Rial
+    - Iranian Rial
+    - Iranian Rials
+    - Rls
+    - Iranian Rls
+    - Toman (colloquial, often implies 10 Rials, but users might say it)
+    - Rial Iran
+    - Persian Rial
+
+- synonym: AED
+  examples: |
+    - Dirhams
+    - Dirham
+    - UAE Dirham
+    - DHS
+    - Emirati Dirham
+    - Arab Emirates Dirham
+    - Dhs.
+
+- synonym: USD
+  examples: |
+    - US Dollars
+    - Dollars
+    - USD
+    - U.S. Dollars
+    - American Dollars
+    - Bucks
+    - US$
+    - $
+    - Greenbacks
+    - Dollar Bills
+
+- intent: add_transaction
+  examples: |
+    - "Add a [120.50](amount) [USD](currency) transaction ([reference 123](reference_id)) from [02/10/2024](date) with a [conversion_rate of 1.0](conversion_rate) [EXCEL_FILE_PATH:testbook.xlsx](file_path)."
+    - "Add [45](amount) [USD](currency) on [05/02/2020](date), [rate 1.0](conversion_rate) ([reference ABC](reference_id)) [EXCEL_FILE_PATH:Users/JohnDoe/Books.xlsx](file_path)."
+    - "Transaction [3000](amount) [AED](currency) [02/06/2018](date), [rate 0.272](conversion_rate) [EXCEL_FILE_PATH:finance_data.xlsx](file_path) ([reference 987](reference_id))."
+    - "Write a transaction of [500](amount) [Dollars](currency) [12/23/2004](date), [rate 0.274](conversion_rate) using [EXCEL_FILE_PATH:old_records.xlsx](file_path) ([reference xyz](reference_id))."
+    - "Transaction, [50000](amount) [Rials](currency) [02/03/2025](date), [rate 62000](conversion_rate) for [EXCEL_FILE_PATH:IR_transactions.xlsx](file_path) ([reference 456](reference_id))."
+    - "Log [1500](amount) [IRR](currency) on [March 5th, 2023](date) at an exchange of [60000](conversion_rate) into [EXCEL_FILE_PATH:my_expenses.xlsx](file_path) ([reference 789](reference_id))."
+    - "New entry: [75.99](amount) [US Dollars](currency), date [15/01/2024](date), [conversion 1](conversion_rate), file [EXCEL_FILE_PATH:jan_sales.xlsx](file_path) ([reference 321](reference_id))."
+    - "Record [10000](amount) [Dirhams](currency) dated [yesterday](date) with [rate 0.27](conversion_rate) to [EXCEL_FILE_PATH:daily_log.xlsx](file_path) ([reference LMN](reference_id))."
+    - "I want to add [250](amount) [AED](currency) for [today](date), [exchange rate 0.2722](conversion_rate), put it in [EXCEL_FILE_PATH:cashflow.xlsx](file_path) ([reference 654](reference_id))."
+    - "Please register [30.25](amount) [Bucks](currency) from [last Tuesday](date), the file is [EXCEL_FILE_PATH:weekly_summary.xlsx](file_path) and [rate was 1](conversion_rate) ([reference OPQ](reference_id))."
+    - "Input [1234.56](amount) in [USD](currency) on [Jan 1, 2023](date). [File: transactions_2023.xlsx](file_path). [Rate: 1.0](conversion_rate) ([reference 112](reference_id))."
+    - "Store [50](amount) [DHS](currency) for [June 10th](date) in [EXCEL_FILE_PATH:summer_expenses.xlsx](file_path), [conversion 0.272](conversion_rate) ([reference RST](reference_id))."
+    - "Note down [two hundred](amount) [American Dollars](currency) on [2024-05-15](date) with [a rate of one](conversion_rate) into [EXCEL_FILE_PATH:travel_costs.xlsx](file_path) ([reference 334](reference_id))."
+    - "A transaction of [one million](amount) [Iranian Rials](currency) happened on [1st April 2023](date), [rate 65000](conversion_rate), log to [EXCEL_FILE_PATH:large_transactions.xlsx](file_path) ([reference UVW](reference_id))."
+    - "[EXCEL_FILE_PATH:personal_budget.xlsx](file_path): add [70](amount) [US$](currency) for [10/10/2023](date), [rate 1](conversion_rate) ([reference 556](reference_id))."
+    - "For [EXCEL_FILE_PATH:business_expenses.xlsx](file_path), please add [15000](amount) [AED](currency) on [2023-12-01](date), [exchange 0.273](conversion_rate) ([reference 778](reference_id))."
+    - "[EXCEL_FILE_PATH:export_data.xlsx](file_path), [5000000](amount) [Rial](currency), [2024/02/29](date), [rate 61500](conversion_rate) ([reference 990](reference_id))."
+    - "Add to [EXCEL_FILE_PATH:import_log.xlsx](file_path): [2500](amount) [Dollars](currency), [07/07/2024](date), [rate 1.00](conversion_rate) ([reference BCD](reference_id))."
+    - "Can you add [10.50](amount) [USD](currency) to [EXCEL_FILE_PATH:misc.xlsx](file_path) for [May 1st 2024](date)? [Rate is 1](conversion_rate) ([reference EFG](reference_id))."
+    - "I spent [550](amount) [Dirham](currency) on [03-Mar-2023](date), record in [EXCEL_FILE_PATH:spending_tracker.xlsx](file_path). [Conversion 0.272](conversion_rate) ([reference 223](reference_id))."
+    - "[EXCEL_FILE_PATH:iran_trip.xlsx](file_path): [250000](amount) [Toman](currency) on [12.11.2023](date), [rate 6200](conversion_rate) (assuming Toman to base currency, or user means 2.5M Rials) ([reference HIJ](reference_id))."
+    - "Add transaction: file [EXCEL_FILE_PATH:project_alpha.xlsx](file_path), amount [1200](amount), currency [USD](currency), date [tomorrow](date), [rate 1](conversion_rate) ([reference 445](reference_id))."
+    - "Log entry: [EXCEL_FILE_PATH:project_beta.xlsx](file_path), [340](amount) [AED](currency), [next Friday](date), [conversion 0.272](conversion_rate) ([reference KLM](reference_id))."
+    - "New record for [EXCEL_FILE_PATH:archive_2022.xlsx](file_path): [600](amount) [U.S. Dollars](currency) from [01/01/2022](date), [rate 1.0](conversion_rate) ([reference 667](reference_id))."
+    - "Transaction in [EXCEL_FILE_PATH:q1_report.xlsx](file_path): [99.99](amount) [Dollars](currency), [March 31, 2024](date), [rate 1](conversion_rate) ([reference NOP](reference_id))."
+    - "Add to spreadsheet [EXCEL_FILE_PATH:daily_sales.xlsx](file_path) a value of [150](amount) [AED](currency) for [the day before yesterday](date), [rate 0.272](conversion_rate) ([reference 889](reference_id))."
+    - "Record for [EXCEL_FILE_PATH:monthly_overview.xlsx](file_path): [750000](amount) [Rials](currency), [Feb 14 2025](date), [exchange rate 63000](conversion_rate) ([reference QRS](reference_id))."
+    - "Put [400](amount) [USD](currency) into [EXCEL_FILE_PATH:savings_log.xlsx](file_path) dated [1st of last month](date), [rate was 1](conversion_rate) ([reference 234](reference_id))."
+    - "Transaction: [12.34](amount) [USD](currency), [EXCEL_FILE_PATH:test.xlsx](file_path), date [2023-08-15](date), [conv rate 1.0](conversion_rate) ([reference TUV](reference_id))."
+    - "Add [five thousand](amount) [AED](currency) on [10.05.2024](date) to [EXCEL_FILE_PATH:company_accounts.xlsx](file_path), [rate 0.272](conversion_rate) ([reference 567](reference_id))."
+    - "Log [two million five hundred thousand](amount) [Iranian Rials](currency) from [three days ago](date) into [EXCEL_FILE_PATH:foreign_exchange.xlsx](file_path) with [rate 61000](conversion_rate) ([reference WXY](reference_id))."
+    - "Need to add [199.99](amount) [US$](currency) from [09/15/2024](date) to [EXCEL_FILE_PATH:online_orders.xlsx](file_path), [rate 1.0](conversion_rate) ([reference 789](reference_id))."
+    - "Register [85](amount) [Dirhams](currency) transaction for [20th of this month](date) in [EXCEL_FILE_PATH:local_purchases.xlsx](file_path). [Rate: 0.2725](conversion_rate) ([reference ZAB](reference_id))."
+    - "Input into [EXCEL_FILE_PATH:audit_trail.xlsx](file_path): [thirty](amount) [Dollars](currency) on [Jan 2nd, 2024](date), [rate 1](conversion_rate) ([reference CDE](reference_id))."
+    - "A sum of [150000](amount) [Rial Iran](currency) on [2024.03.01](date) for [EXCEL_FILE_PATH:tax_records.xlsx](file_path), [rate 62500](conversion_rate) ([reference 901](reference_id))."
+    - "Write [seven hundred fifty](amount) [Emirati Dirham](currency) on [1st of next month](date) to [EXCEL_FILE_PATH:future_payments.xlsx](file_path), [exchange 0.272](conversion_rate) ([reference FGH](reference_id))."
+    - "Log [20](amount) [Bucks](currency) for [last Monday](date) into [EXCEL_FILE_PATH:petty_cash.xlsx](file_path), [rate 1](conversion_rate) ([reference 234](reference_id))."
+    - "Add a new transaction of [88.88](amount) [USD](currency) to [EXCEL_FILE_PATH:subscriptions.xlsx](file_path) for [05/05/2025](date). [Rate 1.0](conversion_rate) ([reference IJK](reference_id))."
+    - "Record [333](amount) [AED](currency) on [June 6th 2024](date) in [EXCEL_FILE_PATH:utilities.xlsx](file_path) with [rate 0.272](conversion_rate) ([reference 567](reference_id))."
+    - "Transaction: [45000](amount) [IRR](currency), file [EXCEL_FILE_PATH:inventory.xlsx](file_path), date [2024-07-19](date), [rate 60000](conversion_rate) ([reference LMN](reference_id))."
+    - "Add [99](amount) [US Dollars](currency) for [today](date) to [EXCEL_FILE_PATH:donations.xlsx](file_path). [Conversion factor 1](conversion_rate) ([reference 890](reference_id))."
+    - "Note: [125](amount) [DHS](currency) on [11/11/2023](date), [EXCEL_FILE_PATH:gifts.xlsx](file_path), [rate 0.272](conversion_rate) ([reference OPQ](reference_id))."
+    - "Please add [1000](amount) [Rials](currency) from [01/02/2024](date) to [EXCEL_FILE_PATH:book_sales.xlsx](file_path) at [a rate of 62000](conversion_rate) ([reference 345](reference_id))."
+    - "New entry for [EXCEL_FILE_PATH:conference_costs.xlsx](file_path): [560](amount) [American Dollars](currency), date [August 1st, 2024](date), [rate 1](conversion_rate) ([reference RST](reference_id))."
+    - "Log [75](amount) [UAE Dirham](currency) in [EXCEL_FILE_PATH:transport.xlsx](file_path) for [yesterday evening](date). [Rate 0.272](conversion_rate) ([reference 678](reference_id))."
+    - "Add to [EXCEL_FILE_PATH:office_supplies.xlsx](file_path): [22.50](amount) [USD](currency), [2024/09/30](date), [conversion 1.0](conversion_rate) ([reference UVW](reference_id))."
+    - "Record transaction of [180000](amount) [Iranian Rls](currency) on [October 5, 2023](date) in [EXCEL_FILE_PATH:maintenance.xlsx](file_path) with [an exchange of 61500](conversion_rate) ([reference 901](reference_id))."
+    - "[EXCEL_FILE_PATH:software_licenses.xlsx](file_path), add [49.99](amount) [$](currency), date [12/01/2024](date), [rate 1](conversion_rate) ([reference BCD](reference_id))."
+    - "Input [600](amount) [Dirhams](currency) into [EXCEL_FILE_PATH:consulting_fees.xlsx](file_path) for [next Wednesday](date), [rate 0.2723](conversion_rate) ([reference EFG](reference_id))."
+    - "A transaction of [35000](amount) [Rial](currency) on [03/15/2025](date) for the file [EXCEL_FILE_PATH:persian_imports.xlsx](file_path), [rate 63000](conversion_rate) ([reference 234](reference_id))."
+    - "Add [200](amount) [USD](currency) to [EXCEL_FILE_PATH:general_ledger.xlsx](file_path) from [2 days ago](date), [rate 1](conversion_rate) ([reference HIJ](reference_id))."
+    - "Log [90](amount) [AED](currency) for [last month's end](date) in [EXCEL_FILE_PATH:rent.xlsx](file_path). [The rate is 0.272](conversion_rate) ([reference 567](reference_id))."
+    - "Record [123.45](amount) [US Dollars](currency) dated [15-Feb-2024](date) in [EXCEL_FILE_PATH:investments.xlsx](file_path), [rate 1](conversion_rate) ([reference KLM](reference_id))."
+    - "[EXCEL_FILE_PATH:charity.xlsx](file_path) needs an entry: [100000](amount) [IRR](currency) on [2025-01-01](date), [rate 65000](conversion_rate) ([reference 890](reference_id))."
+
+- intent: delete_transaction
+  examples: |
+    - Delete transaction [ref: 231](reference ID)
+
+- intent: simple_action
+  examples: |
+    - This is a test
+    - Test
+    - Hello this is a test
+    - Leave me alone this a test

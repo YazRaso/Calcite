@@ -1,0 +1,18 @@
+version: "3.1"
+
+rules:
+- rule: Add Transaction
+  steps:
+    - intent: add_transaction
+    - action: add_transaction
+    - slot_was_set:
+        - requested_slot: null
+- rule: Simple Action
+  steps:
+    - intent: simple_action
+- rule: Delete Transaction
+  steps:
+    - intent: delete_transaction
+    - action: delete_transaction
+    - slot_was_set:
+        - requested_slot: null
