@@ -1,7 +1,5 @@
-from utils.core_server import start_core_server
-from utils.actions_server import start_action_server, check_health
+from utils.start_rasa_container import start_rasa_container, check_actions_health
 import requests
-from utils.kill_port import port_killer
 import os
 import sys
 import json
@@ -165,11 +163,7 @@ class AccountingAssistantUI(QMainWindow):
             self.health_check_timer = QTimer(self)
             self.health_check_timer.setInterval(500)  # Check health every 500ms
             self.health_check_timer.timeout.connect(self.check_server_status_and_proceed)
-
-            port_killer(port=5050)
-            port_killer(port=5055)
-            start_action_server()
-            start_core_server()
+            start_rasa_container()
 
             self.health_check_timer.start()
             self.check_server_status_and_proceed()  # Perform an initial check
@@ -416,11 +410,7 @@ class AccountingAssistantUI(QMainWindow):
             self.health_check_timer = QTimer(self)
             self.health_check_timer.setInterval(500)
             self.health_check_timer.timeout.connect(self.check_server_status_and_proceed)
-
-        port_killer(port=5050)
-        port_killer(port=5055)
-        start_action_server()
-        start_core_server()
+        start_rasa_container()
 
         self.health_check_timer.start()
         self.check_server_status_and_proceed()
@@ -510,11 +500,10 @@ class AccountingAssistantUI(QMainWindow):
         - If check_health() is FALSE (server is NOT healthy), THEN WE KEEP LOADING.
         """
         # print(f"Checking server health... Status: {actions_server.check_health()}") # For debugging
-        if check_health():  # Server is healthy, proceed
+        if check_actions_health() :  # Server is healthy, proceed
             self.health_check_timer.stop()
             if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
                 self.loading_movie.stop()
-            print("Server healthy. Transitioning to landing page.")
             self.stacked_widget.setCurrentWidget(self.landing_page)
         else:  # Server not healthy yet, keep showing loading screen
             # Ensure loading screen is visible and animation is (re)started if needed
@@ -816,7 +805,6 @@ class AccountingAssistantUI(QMainWindow):
             self.output_text.append("----------------------------------------")
             return
         self.wb = ExcelManager(self.selected_file_path)
-        self.wb.error_occurred.connect(self.show_error_message)
         self.wb.generate_receipt()
         self.output_text.append(f"Receipts saved in: {Path('receipts').resolve()}")
         self.output_text.append("----------------------------------------")
@@ -841,7 +829,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # --- Load custom fonts from application directory ---
-    font_dir_path = QDir.cleanPath(QDir.currentPath() + "/fonts/ttf/") # Use QDir.currentPath() for broader compatibility
+    font_dir_path = QDir.cleanPath(QDir.currentPath() + "/fonts/ttf/")
     # For PyInstaller or similar, QDir.appDirPath() might be better if fonts are bundled next to executable
     # font_dir_path = QDir.appDirPath() + "/fonts/ttf/"
 

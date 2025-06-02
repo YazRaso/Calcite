@@ -1,17 +1,19 @@
 import subprocess
 import requests
 import time
+from pathlib import Path
 
 
-def start_action_server() -> None:
+def start_rasa_container() -> None:
     """
-    Start the action server on port 5055
+    Starts the docker container
     :return: None
     """
-    subprocess.Popen(["rasa", "run", "actions"])
+    docker_dir = Path(__file__).parent.parent / "docker"
+    subprocess.Popen(["docker-compose", "up"], cwd=docker_dir.resolve())
 
 
-def check_health() -> bool:
+def check_actions_health() -> bool:
     """
     Poll action server to see if the action server is healthy
     :return: bool
