@@ -54,7 +54,7 @@ for i in "${!tests[@]}"; do
   curl -X POST http://localhost:5005/your_endpoint \
     -H "Content-Type: application/json" \
     -d "{\"message\": \"${tests[i]}\"}"
-
+done
 if [ -s "$EXCEL_FILE_PATH" ]; then
   echo "Tests passed"
 else
