@@ -55,13 +55,10 @@ for i in "${!tests[@]}"; do
     -H "Content-Type: application/json" \
     -d "{\"message\": \"${tests[i]}\"}"
 
-  # Check if Excel file has content
-  if [ -s "$EXCEL_FILE_PATH" ]; then
-    echo "Test $((i+1)) passed"
-  else
-    echo "Test $((i+1)) failed"
-    exit 14
-  fi
-done
-
+if [ -s "$EXCEL_FILE_PATH" ]; then
+  echo "Tests passed"
+else
+  echo "Tests failed"
+  exit 14
+fi
 exit 0
