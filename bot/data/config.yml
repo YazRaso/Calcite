@@ -3,18 +3,16 @@ assistant_id: 20250513-144244-sad-lighthouse
 language: en
 
 pipeline:
-  - name: WhitespaceTokenizer
-  - name: RegexFeaturizer
+  - name: WhitespaceTokenizer # Split into tokens by white space
   - name: LexicalSyntacticFeaturizer
-  - name: CountVectorsFeaturizer
-  - name: CountVectorsFeaturizer
+  - name: CountVectorsFeaturizer # Essentially allows spelling mistakes, see https://arxiv.org/abs/1810.07150,
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
-  - name: DIETClassifier
+  - name: DIETClassifier # Uses a transformer that does both entity and intent extraction
     epochs: 100
     constrain_similarities: true
-  - name: EntitySynonymMapper
+  - name: EntitySynonymMapper # Maps synonym entities
   - name: DucklingEntityExtractor
     url: http://duckling:8000
     dimensions: ["amount-of-money", "time", "number"]
