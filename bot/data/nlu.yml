@@ -102,11 +102,7 @@ nlu:
 
 - intent: delete_transaction
   examples: |
-    - Delete transaction [ref: 231](reference ID)
-
-- intent: simple_action
-  examples: |
-    - This is a test
-    - Test
-    - Hello this is a test
-    - Leave me alone this a test
+    - Delete transaction [ref: 231](reference_id)
+    - Remove transaction [ref: 75489](reference_id)
+    - Transaction [ref: 8921](reference_id)
+    - wipe transaction [ref: 32784abfja29](reference_id)

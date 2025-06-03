@@ -2,7 +2,6 @@ version: "3.1"
 intents:
   - add_transaction
   - delete_transaction
-  - simple_action
 entities:
   - date
   - amount
