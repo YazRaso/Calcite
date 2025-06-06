@@ -13,25 +13,24 @@ rules:
     steps:
       - intent: goodbye
       - action: utter_goodbye
- 
- - rule: Confirm add transaction
+  - rule: Confirm add transaction
     steps:
       - intent: add_transaction
       - action: utter_confirm_transaction
       - intent: affirm
       - active_loop: add_transaction_form  
   
- - rule: Add Transaction:
-   condition:
-     - active_loop: add_transaction_form
-       steps:
-         - action: add_transaction
-         - active_loop: null
-         - slot_was_set:
-             - requested_slot: null
-         - action: utter_transaction_added
+  - rule: Add Transaction
+    condition:
+      - active_loop: add_transaction_form
+        steps:
+          - action: add_transaction
+          - active_loop: null
+          - slot_was_set:
+              - requested_slot: null
+          - action: utter_transaction_added
 
- - rule: Cancel add transaction
+  - rule: Cancel add transaction
     steps:
       - intent: add_transaction
       - action: utter_confirm_transaction
@@ -48,7 +47,7 @@ rules:
       - intent: affirm
       - active_loop: delete_transaction_form 
 
-  - rule: Delete Transaction:
+  - rule: Delete Transaction
     condition:
       - active_loop: delete_transaction_form
         steps:

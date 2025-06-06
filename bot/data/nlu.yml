@@ -1,72 +1,62 @@
+version: "3.1"
 nlu:
-- regex: (?i)reference:\s*(\s*[^\s]+)
-  examples: |
-    - reference: 3820
-    - REFERENCE: 12345 
-    - referEnce: 24asf2
-
-- regex: EXCEL_FILE_PATH:\s*([\w\/\\\:\.-]+\.xls(?:x|m)?)
-  examples: |
-    - /path/to/file.xlsx
-    - C:\Users\Documents\report.xls
+ - regex: (?i)reference:\s*(\s*[^\s]+)
+   examples: |
+    - REFERENCE: 12345
+ - regex: EXCEL_FILE_PATH:\s*([\w\/\\\:\.-]+\.xls(?:x|m)?)
+   examples: |
     - /home/user/data/report.xlsm
-
-- intent: add_transaction
-  examples: |
-    - Add a transaction 
+ - intent: add_transaction
+   examples: |
+    - Add a transaction
     - I want to add a transaction
     - Please add a transaction
     - Can you add a transaction for me?
     - Add a new transaction
     - Record a transaction
     - Log a transaction
-
-- intent: delete_transaction
-  examples: |
-    - Delete a transaction
-    - I want to delete a transaction
-    - Please delete a transaction
-    - Can you remove a transaction for me?
-    - Remove a transaction
-
-- intent: greet
-  examples: |
-    - Hi
-    - Hello
-    - Hey
-    - Greetings
-    - Good morning
-    - Good afternoon
-    - Good evening
-
-- intent: goodbye
-  examples: |
-    - Bye
-    - Goodbye
-    - See you later
-    - Take care
-    - Farewell
-    - Until next time
-
-- intent: affirm
-  examples: |
-    - Correct
-    - Yes, that's right
-    - Go ahead  
-    - Yes
-    - Sure
-    - Definitely
-    - Sounds good
-
-- intent: deny
-  examples: |
-    - No
-    - Not correct
-    - Don't do that
-    - No, that's not right
-    - I don't think so
-    - Absolutely not
-    - Never mind
-    - scratch that
-    - cancel
-    - that is wrong
+ - intent: delete_transaction
+   examples: |
+     - Delete a transaction
+     - I want to delete a transaction
+     - Please delete a transaction
+     - Can you remove a transaction for me?
+     - Remove a transaction
+ - intent: greet
+   examples: |
+     - Hi
+     - Hello
+     - Hey
+     - Greetings
+     - Good morning
+     - Good afternoon
+     - Good evening
+ - intent: goodbye
+   examples: |
+     - Bye
+     - Goodbye
+     - See you later
+     - Take care
+     - Farewell
+     - Until next time
+ - intent: affirm
+   examples: |
+     - Correct
+     - Yes, that's right
+     - Go ahead
+     - Yes
+     - Sure
+     - Definitely
+     - Sounds good
+ - intent: deny
+   examples: |
+     - No
+     - Not correct
+     - Don't do that
+     - No, that's not right
+     - I don't think so
+     - Absolutely not
+     - Never mind
+     - scratch that
+     - cancel
+     - that is wrong

@@ -11,7 +11,7 @@ pipeline:
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
-  - name: DIETClassifier # Uses a transformer that does both entity and intent extraction
+  - name: DIETClassifier
     epochs: 100
     constrain_similarities: true
   - name: EntitySynonymMapper # Maps synonym entities

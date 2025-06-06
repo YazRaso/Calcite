@@ -1,4 +1,13 @@
+version: "3.1"
 responses:
+
+  utter_please_rephrase:
+    - text: "I didn't understand that. Could you please rephrase?"
+    - text: "I'm not sure I understand. Can you say that differently?"
+    - text: "Could you clarify what you mean?"
+    - text: "I didn't understand that, could you please rephrase your request?"
+
+  # hello and goodbye
   utter_greet:
     - text: "Hey there!"
     - text: "Hi! How can I help you today?"
@@ -7,39 +16,49 @@ responses:
     - text: "Bye now"
     - text: "See you later!"
     - text: "Goodbye! If you need help later, just ask."
+
+  # ask for details
+
   utter_ask_date:
     - text: "What date is the transaction?"
     - text: "Please provide the date of the transaction."
   utter_ask_amount:
     - text: "How much is the transaction?"
     - text: "Please provide the amount of the transaction."
-  utter_ask_currency:
-    - text: "What currency is used?"
-    - text: "Please specify the currency for the transaction."    
   utter_ask_conversion_rate:
     - text: "What is the conversion rate?"
-    - text: "Please provide the conversion rate for the transaction."  
+    - text: "Please provide the conversion rate for the transaction."
   utter_ask_file_path:
     - text: "Please provide the file path."
-    - text: "What is the file path where the transaction is stored?"  
+    - text: "What is the file path where the transaction is stored?"
   utter_ask_reference_id:
     - text: "Please provide the reference ID."
     - text: "What is the reference ID for the transaction?"
+  # Asking for confirmation of request
+
+  utter_confirm_deletion:
+    - text: "Are you sure you want to delete the transaction with reference
+      ID {reference_id}?"
+    - text: "Please confirm if you want to delete the transaction with reference
+      ID {reference_id}."
   utter_confirm_transaction:
-    - text: "Summary of the transaction: {amount} {currency} on {date} with conversion rate {conversion_rate}. Reference ID: {reference_id}. Is this correct?"
+    - text: "Summary of the transaction: {amount} {currency} on {date} with con
+    version rate {conversion_rate}. Reference ID: {reference_id}
+    is this correct?"
+    - text: "Please confirm the transaction details: {amount} {currency}
+    on {date} with conversion rate {conversion_rate}.
+    Reference ID: {reference_id}.
+    Is everything correct?"
+  # Confirmation messages for actions
+
   utter_transaction_added:
     - text: "Transaction added successfully!"
     - text: "Your transaction has been recorded."
-  utter_action_canceled:
     - text: "Action canceled. No changes made."
-    - text: "The action has been canceled. No transactions were appended nor modified."
+    - text: "The action has been canceled. No transactions were edited."
   utter_transaction_deleted:
     - text: "Transaction deleted successfully!"
     - text: "The transaction has been removed."
-  utter_confirm_deletion:
-    - text: "Are you sure you want to delete the transaction with reference ID {reference_id}?"
-    - text: "Please confirm if you want to delete the transaction with reference ID {reference_id}."
-      
 intents:
   - add_transaction
   - delete_transaction
@@ -56,7 +75,7 @@ actions:
 
 entities:
   - amount_of_money # amount, currency
-  - time # date
+  - date # date
   - number # rate
   - file_path
   - reference_id
@@ -67,12 +86,12 @@ slots:
     mappings:
       - type: from_entity
         entity: amount_of_money
-  time:
+  date:
     type: text
     mappings:
       - type: from_entity
-        entity: time
-  number: 
+        entity: date
+  number:
     type: float
     mappings:
       - type: from_entity
@@ -91,12 +110,11 @@ forms:
   add_transaction_form:
     # if a slot is not filled, the system will prompt it for the slot
     required_slots:
-    - date
-    - amount
-    - currency
-    - conversion_rate
-    - file_path
-    - reference_id
+      - date
+      - amount_of_money
+      - number
+      - file_path
+      - reference_id
   delete_transaction_form:
     required_slots:
       - file_path
