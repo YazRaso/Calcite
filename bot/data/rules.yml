@@ -23,12 +23,12 @@ rules:
   - rule: Add Transaction
     condition:
       - active_loop: add_transaction_form
-        steps:
-          - action: add_transaction
-          - active_loop: null
-          - slot_was_set:
-              - requested_slot: null
-          - action: utter_transaction_added
+    steps:
+      - action: add_transaction
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: utter_transaction_added
 
   - rule: Cancel add transaction
     steps:
@@ -50,12 +50,12 @@ rules:
   - rule: Delete Transaction
     condition:
       - active_loop: delete_transaction_form
-        steps:
-          - action: delete_transaction
-          - active_loop: null
-          - slot_was_set:
-              - requested_slot: null
-          - action: utter_transaction_deleted
+    steps:
+      - action: delete_transaction
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: utter_transaction_deleted
 
   - rule: Cancel delete transaction
     steps:

@@ -59,6 +59,11 @@ responses:
   utter_transaction_deleted:
     - text: "Transaction deleted successfully!"
     - text: "The transaction has been removed."
+
+  utter_action_canceled:
+    - text: "Action canceled. No changes made."
+    - text: "The action has been canceled. No transactions were edited."
+
 intents:
   - add_transaction
   - delete_transaction
