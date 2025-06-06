@@ -1,6 +1,9 @@
-version: "3.1"
-
 nlu:
+- regex: EXCEL_FILE_PATH:\s*([\w\/\\\:\.-]+\.xls(?:x|m)?)
+  examples: |
+    - /path/to/file.xlsx
+    - C:\Users\Documents\report.xls
+    - /home/user/data/report.xlsm
 - synonym: IRR
   examples: |
     - Rials
@@ -9,7 +12,6 @@ nlu:
     - Iranian Rials
     - Rls
     - Iranian Rls
-    - Toman (colloquial, often implies 10 Rials, but users might say it)
     - Rial Iran
     - Persian Rial
 
@@ -36,38 +38,3 @@ nlu:
     - Greenbacks
     - Dollar Bills
 
-- intent: add_transaction
-  examples: |
-    - Add a transaction on [2025-06-03](date) for [150.50](amount) [USD](currency) with a conversion rate of [1.2](conversion_rate) in file [transactions.xlsx](file_path) and reference ID [12345](reference_id)
-    - Please add a transaction dated [2024-12-01](date) amounting to [200](amount) [CAD](currency), conversion rate [0.95](conversion_rate), file is [data.xlsx](file_path), ref ID [9876](reference_id)
-    - I want to add a transaction with date [2023-05-10](date), amount [500.75](amount), currency [EUR](currency), conversion rate [1.1](conversion_rate), file path [records.xlsx](file_path), ref [555](reference_id)
-    - Add transaction for [2022-11-25](date), amount [300](amount), currency [GBP](currency), conversion rate [1.3](conversion_rate), file [finance.xlsx](file_path), reference [321](reference_id)
-    - Create a transaction on [2025-01-15](date), amount [1000](amount), currency [USD](currency), conversion rate [1](conversion_rate), file path [budget.xlsx](file_path), ref ID [1122](reference_id)
-    - Insert transaction dated [2024-09-09](date), amount [75.5](amount), currency [JPY](currency), conversion rate [0.008](conversion_rate), file [expenses.xlsx](file_path), reference ID [42](reference_id)
-    - Add transaction with date [2025-04-20](date), amount [250](amount), currency [AUD](currency), conversion rate [0.75](conversion_rate), file [payments.xlsx](file_path), ref ID [999](reference_id)
-    - Add a new transaction for [2025-06-01](date), amount [320.40](amount), currency [USD](currency), conversion rate [1.2](conversion_rate), file path [ledger.xlsx](file_path), reference [123](reference_id)
-    - Add transaction from [2024-03-15](date), amount [450](amount), currency [CAD](currency), conversion rate [0.95](conversion_rate), file [transactions.xlsx](file_path), ref ID [567](reference_id)
-    - Insert a transaction on [2025-02-28](date), amount [600](amount), currency [EUR](currency), conversion rate [1.1](conversion_rate), file path [records.xlsx](file_path), reference ID [789](reference_id)
-    - Add transaction dated [2025-05-05](date), amount [125.75](amount), currency [USD](currency), conversion rate [1](conversion_rate), file [data.xlsx](file_path), reference [321](reference_id)
-    - Please add a transaction with date [2024-07-12](date), amount [300](amount), currency [GBP](currency), conversion rate [1.3](conversion_rate), file [finance.xlsx](file_path), ref ID [654](reference_id)
-    - Create transaction on [2025-06-03](date), amount [50](amount), currency [USD](currency), conversion rate [1.0](conversion_rate), file path [ledger.xlsx](file_path), reference ID [999](reference_id)
-    - Add transaction with date [2023-08-20](date), amount [780](amount), currency [JPY](currency), conversion rate [0.008](conversion_rate), file [payments.xlsx](file_path), ref ID [321](reference_id)
-    - Insert a transaction dated [2024-11-11](date), amount [150](amount), currency [AUD](currency), conversion rate [0.75](conversion_rate), file [expenses.xlsx](file_path), reference ID [123](reference_id)
-
-- intent: delete_transaction
-  examples: |
-    - Delete the transaction with reference ID [12345](reference_id) from file [transactions.xlsx](file_path)
-    - Remove transaction ref [9876](reference_id) in file [data.xlsx](file_path)
-    - Delete the entry with reference ID [555](reference_id) from [records.xlsx](file_path)
-    - Remove transaction with ref ID [321](reference_id) in file [finance.xlsx](file_path)
-    - Delete transaction [1122](reference_id) from file [budget.xlsx](file_path)
-    - Remove transaction with reference [42](reference_id) in file [expenses.xlsx](file_path)
-    - Delete transaction ref [999](reference_id) in [payments.xlsx](file_path)
-    - Delete transaction with ID [123](reference_id) from file [ledger.xlsx](file_path)
-    - Remove transaction reference [567](reference_id) in file [transactions.xlsx](file_path)
-    - Delete transaction ref [789](reference_id) in file [records.xlsx](file_path)
-    - Remove transaction with reference ID [321](reference_id) in [data.xlsx](file_path)
-    - Delete the transaction with ref [654](reference_id) from file [finance.xlsx](file_path)
-    - Delete transaction with reference [999](reference_id) in file [ledger.xlsx](file_path)
-    - Remove transaction with ref ID [321](reference_id) in file [payments.xlsx](file_path)
-    - Delete the transaction with reference ID [123](reference_id) in file [expenses.xlsx](file_path)

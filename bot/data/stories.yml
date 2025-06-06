@@ -1,0 +1,30 @@
+version: "3.1"
+
+stories:
+- story: Add transaction happy path
+  steps:
+  - intent: add_transaction
+  - action: add_transaction_form
+  - active_loop: add_transaction_form
+  - slot_was_set:
+    - date: "2025-06-01"
+    - amount: 100.0
+    - currency: "USD"
+    - conversion_rate: 1.0
+    - file_path: "/path/to/file.xlsx"
+    - reference_id: 12345
+  - action: add_transaction_form
+  - active_loop: null
+  - action: add_transaction
+
+- story: Delete transaction happy path
+  steps:
+  - intent: delete_transaction
+  - action: delete_transaction_form
+  - active_loop: delete_transaction_form
+  - slot_was_set:
+    - file_path: "/path/to/file.xlsx"
+    - reference_id: 12345
+  - action: delete_transaction_form
+  - active_loop: null
+  - action: delete_transaction

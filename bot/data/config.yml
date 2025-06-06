@@ -4,8 +4,10 @@ language: en
 
 pipeline:
   - name: WhitespaceTokenizer # Split into tokens by white space
-  - name: LexicalSyntacticFeaturizer
-  - name: CountVectorsFeaturizer # Essentially allows spelling mistakes, see https://arxiv.org/abs/1810.07150,
+  - name: RegexFeaturizer # Allows for regex-based features
+    use_regexes: true
+    use_lexical_syntactic_features: true
+  - name: CountVectorsFeaturizer
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
@@ -16,12 +18,8 @@ pipeline:
   - name: DucklingEntityExtractor
     url: http://duckling:8000
     dimensions: ["amount-of-money", "time", "number"]
-  - name: ResponseSelector
-    epochs: 100
-    constrain_similarities: true
   - name: FallbackClassifier
     threshold: 0.3
-    ambiguity_threshold: 0.1
 
 policies:
   - name: "RulePolicy"

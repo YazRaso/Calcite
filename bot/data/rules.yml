@@ -1,30 +1,69 @@
-version: "3.1"
-
 rules:
-- rule: Add Transaction
-  steps:
-    - intent: add_transaction
-    - action: add_transaction_form
-    - active_loop: add_transaction_form
+  - rule: I do not understand
+    steps:
+      - intent: nlu_fallback
+      - action: utter_please_rephrase
 
-- rule: Submit Add Transaction
-  condition:
-    - active_loop: add_transaction_form
-  steps:
-    - action: add_transaction_form
-    - active_loop: null
-    - action: add_transaction
+  - rule: Greet user
+    steps:
+      - intent: greet
+      - action: utter_greet
 
-- rule: Delete Transaction
-  steps:
-    - intent: delete_transaction
-    - action: delete_transaction_form
-    - active_loop: delete_transaction_form
+  - rule: Farewell user
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+ 
+ - rule: Confirm add transaction
+    steps:
+      - intent: add_transaction
+      - action: utter_confirm_transaction
+      - intent: affirm
+      - active_loop: add_transaction_form  
+  
+ - rule: Add Transaction:
+   condition:
+     - active_loop: add_transaction_form
+       steps:
+         - action: add_transaction
+         - active_loop: null
+         - slot_was_set:
+             - requested_slot: null
+         - action: utter_transaction_added
 
-- rule: Submit Delete Transaction
-  condition:
-    - active_loop: delete_transaction_form
-  steps:
-    - action: delete_transaction_form
-    - active_loop: null
-    - action: delete_transaction
+ - rule: Cancel add transaction
+    steps:
+      - intent: add_transaction
+      - action: utter_confirm_transaction
+      - intent: deny
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null
+      - action: utter_action_canceled
+
+  - rule: Confirm delete transaction
+    steps:
+      - intent: delete_transaction
+      - action: utter_confirm_deletion
+      - intent: affirm
+      - active_loop: delete_transaction_form 
+
+  - rule: Delete Transaction:
+    condition:
+      - active_loop: delete_transaction_form
+        steps:
+          - action: delete_transaction
+          - active_loop: null
+          - slot_was_set:
+              - requested_slot: null
+          - action: utter_transaction_deleted
+
+  - rule: Cancel delete transaction
+    steps:
+      - intent: delete_transaction
+      - action: utter_confirm_deletion
+      - intent: deny
+      - active_loop: null
+      - slot_was_set:
+          - requested_slot: null  
+      - action: utter_action_canceled
