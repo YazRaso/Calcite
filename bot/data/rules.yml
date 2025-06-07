@@ -13,56 +13,21 @@ rules:
     steps:
       - intent: goodbye
       - action: utter_goodbye
-  - rule: Confirm add transaction
-    steps:
-      - intent: add_transaction
-      - action: utter_confirm_transaction
-      - intent: affirm
-      - active_loop: add_transaction_form  
-  
-  - rule: Add Transaction
+
+  - rule: Handle cancellation during a form
     condition:
       - active_loop: add_transaction_form
     steps:
-      - action: add_transaction
-      - active_loop: null
-      - slot_was_set:
-          - requested_slot: null
-      - action: utter_transaction_added
-
-  - rule: Cancel add transaction
-    steps:
-      - intent: add_transaction
-      - action: utter_confirm_transaction
       - intent: deny
-      - active_loop: null
-      - slot_was_set:
-          - requested_slot: null
       - action: utter_action_canceled
+      - action: action_deactivate_loop
+      - active_loop: null
 
-  - rule: Confirm delete transaction
-    steps:
-      - intent: delete_transaction
-      - action: utter_confirm_deletion
-      - intent: affirm
-      - active_loop: delete_transaction_form 
-
-  - rule: Delete Transaction
+  - rule: Handle cancellation during delete form
     condition:
       - active_loop: delete_transaction_form
     steps:
-      - action: delete_transaction
-      - active_loop: null
-      - slot_was_set:
-          - requested_slot: null
-      - action: utter_transaction_deleted
-
-  - rule: Cancel delete transaction
-    steps:
-      - intent: delete_transaction
-      - action: utter_confirm_deletion
       - intent: deny
-      - active_loop: null
-      - slot_was_set:
-          - requested_slot: null  
       - action: utter_action_canceled
+      - action: action_deactivate_loop
+      - active_loop: null

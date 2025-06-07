@@ -1,0 +1,30 @@
+stories:
+  - story: Add transaction happy path
+    steps:
+      - intent: add_transaction
+      - action: utter_confirm_transaction
+      - intent: affirm
+      - action: add_transaction_form
+      - active_loop: add_transaction_form
+
+  - story: Add transaction sad path
+    steps:
+      - intent: add_transaction
+      - action: utter_confirm_transaction
+      - intent: deny
+      - action: utter_action_canceled
+
+  - story: Delete transaction happy path
+    steps:
+      - intent: delete_transaction
+      - action: utter_confirm_deletion
+      - intent: affirm
+      - action: delete_transaction_form
+      - active_loop: delete_transaction_form
+
+  - story: Delete transaction sad path
+    steps:
+      - intent: delete_transaction
+      - action: utter_confirm_deletion
+      - intent: deny
+      - action: utter_action_canceled
