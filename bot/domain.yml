@@ -80,7 +80,7 @@ actions:
 
 entities:
   - amount-of-money # amount, currency
-  - date # date
+  - date
   - number # rate
   - file_path
   - reference_id
@@ -124,5 +124,3 @@ forms:
     required_slots:
       - file_path
       - reference_id
-
-
