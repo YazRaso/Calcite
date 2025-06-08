@@ -10,7 +10,7 @@ class AddTransaction(Action):
 
     # Add transaction and save it
     async def run(
-            self, dispatcher, tracker: Tracker, domain: Dict[Text, Any],
+            self, dispatcher, tracker: Tracker, domain: Dict[str, Any],
             ):
         # Get slots
         file_path = tracker.get_slot("file_path")
@@ -38,7 +38,7 @@ class DeleteTransaction(Action):
         return "delete_transaction"
 
     async def run(
-            self, dispatcher, tracker: Tracker, domain: Dict[Text, Any],
+            self, dispatcher, tracker: Tracker, domain: Dict[str, Any],
     ):
         # Get slots
         file_path = tracker.get_slot("file_path")
