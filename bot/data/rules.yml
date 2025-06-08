@@ -1,4 +1,10 @@
 rules:
+  - rule: Activate add transaction form
+    steps:
+      - intent: add_transaction
+      - action: action_add_transaction_form
+      - active_loop: add_transaction_form
+
   - rule: I do not understand
     steps:
       - intent: nlu_fallback

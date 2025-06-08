@@ -87,7 +87,7 @@ entities:
 
 slots:
   amount-of-money:
-    type: float
+    type: any
     mappings:
       - type: from_entity
         entity: amount-of-money
@@ -124,3 +124,5 @@ forms:
     required_slots:
       - file_path
       - reference_id
+
+
