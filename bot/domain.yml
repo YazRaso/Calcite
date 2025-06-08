@@ -79,18 +79,18 @@ actions:
   - delete_transaction
 
 entities:
-  - amount_of_money # amount, currency
+  - amount-of-money # amount, currency
   - date # date
   - number # rate
   - file_path
   - reference_id
 
 slots:
-  amount_of_money:
+  amount-of-money:
     type: float
     mappings:
       - type: from_entity
-        entity: amount_of_money
+        entity: amount-of-money
   date:
     type: text
     mappings:
@@ -116,7 +116,7 @@ forms:
     # if a slot is not filled, the system will prompt it for the slot
     required_slots:
       - date
-      - amount_of_money
+      - amount-of-money
       - number
       - file_path
       - reference_id
