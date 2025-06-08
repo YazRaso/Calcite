@@ -14,10 +14,16 @@ class AddTransaction(Action):
             ):
         # Get slots
         file_path = tracker.get_slot("file_path")
+        file_path = file_path.strip()
+        if "EXCEL_FILE" in file_path:
+            file_path = file_path.replace("EXCEL_FILE", "")
         amount_of_money = tracker.get_slot("amount_of_money")
         amount, currency = amount_of_money["value"], amount_of_money["unit"]
         conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")
+        reference_id = reference_id.strip().lower()
+        if "reference_id" in reference_id:
+            reference_id = reference_id.replace("reference_id", "")
         transaction_id = id_generator.generate_id()
         time = tracker.get_slot("time")
 
@@ -42,7 +48,13 @@ class DeleteTransaction(Action):
     ):
         # Get slots
         file_path = tracker.get_slot("file_path")
+        file_path = file_path.strip()
+        if "EXCEL_FILE" in file_path:
+            file_path = file_path.replace("EXCEL_FILE", "")
         reference_id = tracker.get_slot("reference_id")
+        reference_id = reference_id.strip().lower()
+        if "reference_id" in reference_id:
+            reference_id = reference_id.replace("reference_id", "")
         if not file_path or not reference_id:
             dispatcher.utter_message(text="File path or reference ID is missing. Please try again.")
             return []
