@@ -3,9 +3,9 @@ nlu:
  - regex: file_path
    examples: |
     - EXCEL_FILE_PATH\s*([\w\/\\:. -]+\.xls(?:x|m)?)
-  - regex: reference_id
-    examples: |
-      - (?i)reference\s*([^\s]+)
+ - regex: reference_id
+   examples: |
+    - (?i)reference\s*([^\s]+)
  - intent: add_transaction
    examples: |
     - Add a transaction
