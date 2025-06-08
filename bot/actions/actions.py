@@ -5,18 +5,20 @@ import app.core.id_generator as id_generator
 
 
 class AddTransaction(Action):
-    def name(self) -> str:
+    def name(self) -> Text:
         return "add_transaction"
 
     # Add transaction and save it
     async def run(
-            self, dispatcher, tracker: Tracker, domain: Dict[str, Any],
+            self, dispatcher, tracker: Tracker, domain: Dict[Text, Any],
             ):
         # Get slots
         file_path = tracker.get_slot("file_path")
-        amount, currency = tracker.get_slot("amount")["value"]["value"], tracker.get_slot("currency")["value"]["unit"]
+        amount_of_money = tracker.get_slot("amount-of-money")
+        amount, currency = amount_of_money["value"], amount_of_money["unit"]
         conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")
+        transaction_id = id_generator.generate_id()
         date = tracker.get_slot("date")
 
         # Append transaction
@@ -32,16 +34,18 @@ class AddTransaction(Action):
 
 
 class DeleteTransaction(Action):
-    def name(self) -> str:
+    def name(self) -> Text:
         return "delete_transaction"
 
     async def run(
-            self, dispatcher, tracker: Tracker, domain: Dict[str, Any],
+            self, dispatcher, tracker: Tracker, domain: Dict[Text, Any],
     ):
         # Get slots
         file_path = tracker.get_slot("file_path")
         reference_id = tracker.get_slot("reference_id")
-
+        if not file_path or not reference_id:
+            dispatcher.utter_message(text="File path or reference ID is missing. Please try again.")
+            return []
         # Delete transaction
         current_workbook = books.ExcelManager(file_path)
         current_workbook.delete_transaction(reference_id=reference_id)
