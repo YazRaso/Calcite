@@ -22,8 +22,8 @@ class AddTransaction(Action):
         conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")
         reference_id = reference_id.strip().lower()
-        if "reference_id" in reference_id:
-            reference_id = reference_id.replace("reference_id", "")
+        if "reference" in reference_id:
+            reference_id = reference_id.replace("reference", "")
         transaction_id = id_generator.generate_id()
         time = tracker.get_slot("time")
 
@@ -53,8 +53,8 @@ class DeleteTransaction(Action):
             file_path = file_path.replace("EXCEL_FILE", "")
         reference_id = tracker.get_slot("reference_id")
         reference_id = reference_id.strip().lower()
-        if "reference_id" in reference_id:
-            reference_id = reference_id.replace("reference_id", "")
+        if "reference" in reference_id:
+            reference_id = reference_id.replace("reference", "")
         if not file_path or not reference_id:
             dispatcher.utter_message(text="File path or reference ID is missing. Please try again.")
             return []
