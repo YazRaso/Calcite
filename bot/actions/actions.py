@@ -19,14 +19,14 @@ class AddTransaction(Action):
         conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")
         transaction_id = id_generator.generate_id()
-        date = tracker.get_slot("date")
+        time = tracker.get_slot("time")
 
         # Append transaction
         current_workbook = books.ExcelManager(file_path) 
         current_workbook.add_transaction(amount=amount, currency=currency, conversion_rate=conversion_rate,
-                                         transaction_id=transaction_id, transaction_date=date)
+                                         transaction_id=transaction_id, transaction_date=time)
 
-        if not all([file_path, date, amount, currency, conversion_rate]):
+        if not all([file_path, time, amount, currency, conversion_rate]):
             dispatcher.utter_message(text="Some information is missing. Please try again.")
         else:
             dispatcher.utter_message(text="Transaction added successfully.")
