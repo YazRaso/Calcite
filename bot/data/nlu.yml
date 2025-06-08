@@ -1,11 +1,11 @@
 version: "3.1"
 nlu:
- - regex: (?i)reference\s*(\s*[^\s]+)
+ - regex: file_path
    examples: |
-    - REFERENCE: 12345
- - regex: /EXCEL_FILE_PATH\s*([\w\/\\:. -]+\.xls(?:x|m)?)\b/gm
-   examples: |
-    - /home/user/data/report.xlsm
+    - EXCEL_FILE_PATH\s*([\w\/\\:. -]+\.xls(?:x|m)?)
+  - regex: reference_id
+    examples: |
+      - (?i)reference\s*([^\s]+)
  - intent: add_transaction
    examples: |
     - Add a transaction
