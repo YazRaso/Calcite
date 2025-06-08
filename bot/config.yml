@@ -5,15 +5,15 @@ language: en
 pipeline:
   - name: WhitespaceTokenizer # Split into tokens by white space
   - name: RegexFeaturizer # Allows for regex-based features
-    use_regexes: true
-    use_lexical_syntactic_features: true
+    use_regexes: True
+    use_lexical_syntactic_features: True
   - name: CountVectorsFeaturizer
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
   - name: DIETClassifier
     epochs: 100
-    constrain_similarities: true
+    constrain_similarities: True
   - name: EntitySynonymMapper # Maps synonym entities
   - name: DucklingEntityExtractor
     url: http://duckling:8000
