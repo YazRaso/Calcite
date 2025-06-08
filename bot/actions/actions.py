@@ -5,7 +5,7 @@ import app.core.id_generator as id_generator
 
 
 class AddTransaction(Action):
-    def name(self) -> Text:
+    def name(self) -> str:
         return "add_transaction"
 
     # Add transaction and save it
@@ -34,7 +34,7 @@ class AddTransaction(Action):
 
 
 class DeleteTransaction(Action):
-    def name(self) -> Text:
+    def name(self) -> str:
         return "delete_transaction"
 
     async def run(
