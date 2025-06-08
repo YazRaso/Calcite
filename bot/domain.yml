@@ -18,16 +18,15 @@ responses:
     - text: "Goodbye! If you need help later, just ask."
 
   # ask for details
-
+  utter_ask_number:
+    - text: "What is the conversion rate?"
+    - text: "Please provide the conversion rate for the transaction."
   utter_ask_time:
     - text: "What time is the transaction?"
     - text: "Please provide the time of the transaction."
-  utter_ask_amount:
+  utter_ask_amount_of_money:
     - text: "How much is the transaction?"
     - text: "Please provide the amount of the transaction."
-  utter_ask_conversion_rate:
-    - text: "What is the conversion rate?"
-    - text: "Please provide the conversion rate for the transaction."
   utter_ask_file_path:
     - text: "Please provide the file path."
     - text: "What is the file path where the transaction is stored?"
@@ -79,18 +78,18 @@ actions:
   - delete_transaction
 
 entities:
-  - amount-of-money # amount, currency
+  - amount_of_money # amount, currency
   - time
   - number # rate
   - file_path
   - reference_id
 
 slots:
-  amount-of-money:
+  amount_of_money:
     type: any
     mappings:
       - type: from_entity
-        entity: amount-of-money
+        entity: amount_of_money
   time:
     type: text
     mappings:
@@ -116,7 +115,7 @@ forms:
     # if a slot is not filled, the system will prompt it for the slot
     required_slots:
       - time
-      - amount-of-money
+      - amount_of_money
       - number
       - file_path
       - reference_id

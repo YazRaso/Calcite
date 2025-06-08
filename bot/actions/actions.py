@@ -14,7 +14,7 @@ class AddTransaction(Action):
             ):
         # Get slots
         file_path = tracker.get_slot("file_path")
-        amount_of_money = tracker.get_slot("amount-of-money")
+        amount_of_money = tracker.get_slot("amount_of_money")
         amount, currency = amount_of_money["value"], amount_of_money["unit"]
         conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")

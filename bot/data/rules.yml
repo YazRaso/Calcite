@@ -1,9 +1,40 @@
 rules:
-  - rule: Activate add transaction form
+  - rule: Activate Add Transaction Form
     steps:
       - intent: add_transaction
-      - action: action_add_transaction_form
+      - action: add_transaction_form
       - active_loop: add_transaction_form
+
+  - rule: Add Transaction Form Submit
+    condition:
+      - active_loop: add_transaction_form
+    steps:
+      - action: add_transaction
+      - active_loop: null
+      - slot_was_set:
+          - time: null
+          - amount_of_money: null
+          - number: null
+          - file_path: null
+          - reference_id: null
+      - action: utter_transaction_added
+
+  - rule: Activate Delete Transaction Form
+    steps:
+      - intent: delete_transaction
+      - action: delete_transaction_form
+      - active_loop: delete_transaction_form
+
+  - rule: Delete Transaction Form Submit
+    condition:
+      - active_loop: delete_transaction_form
+    steps:
+      - action: delete_transaction
+      - active_loop: null
+      - slot_was_set:
+          - file_path: null
+          - reference_id: null
+      - action: utter_transaction_deleted
 
   - rule: I do not understand
     steps:
@@ -18,22 +49,3 @@ rules:
   - rule: Farewell user
     steps:
       - intent: goodbye
-      - action: utter_goodbye
-
-  - rule: Handle cancellation during a form
-    condition:
-      - active_loop: add_transaction_form
-    steps:
-      - intent: deny
-      - action: utter_action_canceled
-      - action: action_deactivate_loop
-      - active_loop: null
-
-  - rule: Handle cancellation during delete form
-    condition:
-      - active_loop: delete_transaction_form
-    steps:
-      - intent: deny
-      - action: utter_action_canceled
-      - action: action_deactivate_loop
-      - active_loop: null
