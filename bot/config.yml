@@ -4,6 +4,7 @@ language: en
 
 pipeline:
   - name: WhitespaceTokenizer # Split into tokens by white space
+  - name: RegexEntityExtractor
   - name: RegexFeaturizer # Allows for regex-based features
     use_regexes: True
     use_lexical_syntactic_features: True
