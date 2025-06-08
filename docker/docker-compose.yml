@@ -2,17 +2,14 @@ services:
   rasa:
     image: yazr/calcite
     build:
-      context: ..
+      context: ..  # Project root is parent directory
       dockerfile: docker/DockerfileCore
-    container_name: my_rasa_server # Consider renaming to avoid conflicts
+    container_name: my_rasa_server 
     ports:
       - "5005:5005"
     volumes:
-      # Mount the local bot directory for Rasa's specific needs (models, data, etc.)
-      # This will overlay /app/bot in the container.
+      - {FILE_PATH}:<path goes here>
       - ../bot:/app/bot
-      # If Rasa server itself needs to access app.py or core, you might need a broader mount or ensure paths are correct.
-      # For now, assuming Rasa primarily needs its bot-specific files.
     depends_on:
       - duckling
     command: ["run", "--enable-api", "--debug", "--model", "/app/bot/models/", "--endpoints", "/app/bot/data/endpoints.yml", "--port", "5005"]
@@ -21,13 +18,10 @@ services:
     build:
       context: ..
       dockerfile: docker/DockerfileActions
-    container_name: my_rasa_actions # Consider renaming
+    container_name: my_rasa_actions
     ports:
       - "5055:5055"
     volumes:
-      # Mount the entire project root from the host to /app in the container.
-      # This makes all your project files (app.py, core/, bot/, etc.)
-      # available at /app/... inside the container.
       - ../:/app
     command: ["run", "actions", "--actions", "app.bot.actions", "--port", "5055"]
 
@@ -36,3 +30,5 @@ services:
     container_name: duckling
     ports:
       - "8000:8000"
+volumes:
+  {FILE_PATH}:
