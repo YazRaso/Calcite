@@ -32,7 +32,7 @@ class AddTransaction(Action):
         # Append transaction
         current_workbook = books.ExcelManager(file_path) 
         current_workbook.add_transaction(amount=amount, currency=currency, conversion_rate=conversion_rate,
-                                         transaction_date=time)
+                                         reference_id=reference_id, transaction_date=time)
 
         if not all([file_path, time, amount, currency, conversion_rate]):
             dispatcher.utter_message(text="Some information is missing. Please try again.")
