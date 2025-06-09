@@ -53,8 +53,6 @@ responses:
   utter_transaction_added:
     - text: "Transaction added successfully!"
     - text: "Your transaction has been recorded."
-    - text: "Action canceled. No changes made."
-    - text: "The action has been canceled. No transactions were edited."
   utter_transaction_deleted:
     - text: "Transaction deleted successfully!"
     - text: "The transaction has been removed."
