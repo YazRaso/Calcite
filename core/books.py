@@ -34,18 +34,12 @@ class ExcelManager:
         Loads a given Excel workbook, if it doesn't exist then creates one.
         :return: None
         """
-        if self.filepath.exists():
-            self.wb = load_workbook(self.filepath)
-            self.ws = self.wb.active
-            for col_num, header in enumerate(self.headers, start=1):
-                self.ws.cell(row=1, column=col_num, value=header)
+        self.wb = load_workbook(self.filepath)
+        self.ws = self.wb.active
+        for col_num, header in enumerate(self.headers, start=1):
+            self.ws.cell(row=1, column=col_num, value=header)
 
-            self.save()
-        else:
-            self.wb = Workbook()
-            self.ws = self.wb.active
-            self.ws.append(self.headers)
-            self.save()
+        self.save()
 
     def check_summary(self) -> bool:
         """
