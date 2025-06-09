@@ -17,6 +17,7 @@ rules:
           - file_path: true
           - reference_id: true
       - action: add_transaction
+      - utter_transaction_added
       - active_loop: null
 
   - rule: Activate Add Transaction Form
