@@ -12,10 +12,8 @@ class AddTransaction(Action):
             self, dispatcher, tracker: Tracker, domain: Dict[str, Any],
             ):
         # Get slots
-        file_path = tracker.get_slot("file_path")
-        file_path = file_path.strip()
-        if "EXCEL_FILE" in file_path:
-            file_path = file_path.replace("EXCEL_FILE", "")
+        file_path = tracker.get_slot("file_path") 
+        file_path = file_path.strip().replace("\n", "").replace("EXCEL_FILE_PATH", "")
         amount_of_money = tracker.get_slot("amount_of_money")
         if isinstance(amount_of_money, str):
             if " " in amount_of_money:
@@ -66,13 +64,9 @@ class DeleteTransaction(Action):
     ):
         # Get slots
         file_path = tracker.get_slot("file_path")
-        file_path = file_path.strip()
-        if "EXCEL_FILE" in file_path:
-            file_path = file_path.replace("EXCEL_FILE", "")
+        file_path = file_path.replace("EXCEL_FILE_PATH", "")
         reference_id = tracker.get_slot("reference_id")
-        reference_id = reference_id.strip().lower()
-        if "reference" in reference_id:
-            reference_id = reference_id.replace("reference", "")
+        reference_id = reference_id.strip().lower().replace("reference", "")
         if not file_path or not reference_id:
             dispatcher.utter_message(text="File path or reference ID is missing. Please try again.")
             return []
