@@ -23,7 +23,7 @@ services:
     volumes:
       - type: bind
         source: ../sheet_data
-        target: /app/sheet
+        target: ../sheet_data
       - type: bind
         source: ..
         target: /app
