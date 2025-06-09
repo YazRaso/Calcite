@@ -17,8 +17,8 @@ class AddTransaction(Action):
         if "EXCEL_FILE" in file_path:
             file_path = file_path.replace("EXCEL_FILE", "")
         amount_of_money = tracker.get_slot("amount_of_money")
-        amount, currency = amount_of_money, amount_of_money
-        conversion_rate = tracker.get_slot("conversion_rate")
+        amount, currency = amount_of_money["value"], amount_of_money["unit"]
+        conversion_rate = tracker.get_slot("number")
         reference_id = tracker.get_slot("reference_id")
         reference_id = reference_id.strip().lower()
         if "reference" in reference_id:
