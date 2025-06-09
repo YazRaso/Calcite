@@ -21,8 +21,12 @@ services:
     ports:
       - "5055:5055"
     volumes:
-      - <ABS PATH TO XL SUPER DIRECTORY>:/app/excel_super  # Replace abs path with actual path
-      - ../:/app
+      - type: bind
+        source: ../sheet_data
+        target: /app/sheet
+      - type: volume
+        source: ..
+        target: /app
     command: ["run", "actions", "--actions", "app.bot.actions", "--port", "5055"]
 
   duckling:
@@ -30,3 +34,5 @@ services:
     container_name: duckling
     ports:
       - "8000:8000"
+volumes:
+  sheet_data:
