@@ -19,7 +19,7 @@ class AddTransaction(Action):
         amount_of_money = tracker.get_slot("amount_of_money")
         if isinstance(amount_of_money, str):
             if " " in amount_of_money:
-                amount_of_money = amount_of_money.split(" ")
+                amount_of_money = amount_of_money.split(" ", 1)
                 amount = amount_of_money[0]
                 currency = amount_of_money[1]
             else:
