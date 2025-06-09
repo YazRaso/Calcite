@@ -1,5 +1,4 @@
 from openpyxl import Workbook, load_workbook
-from pathlib import Path
 from .receipt import generate_receipt
 
 
@@ -23,7 +22,7 @@ class ExcelManager:
         :param filepath (str): Path to the Excel workbook:
         """
         super().__init__()
-        self.filepath = Path(filepath)
+        self.filepath = filepath
         self.headers = ['Amount', 'Currency',
                         'Conversion Rate', 'Transaction ID',
                         'Transaction Date']
