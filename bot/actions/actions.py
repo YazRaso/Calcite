@@ -1,6 +1,6 @@
 from rasa_sdk import Action, Tracker
 from typing import Any, Dict
-import app.core.books as books
+from core import books
 
 
 class AddTransaction(Action):
