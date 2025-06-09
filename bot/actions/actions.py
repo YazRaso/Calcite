@@ -17,10 +17,10 @@ class AddTransaction(Action):
         if "EXCEL_FILE" in file_path:
             file_path = file_path.replace("EXCEL_FILE", "")
         amount_of_money = tracker.get_slot("amount_of_money")
-        if isInstance(amount_of_money, str):
-            amount =  " ".split(amount_of_money)[0]
+        if isinstance(amount_of_money, str):
+            amount = " ".split(amount_of_money)[0]
             currency = " ".split(amount_of_money)[1]
-        elif isInstance(amount_of_money, Dict):
+        elif isinstance(amount_of_money, Dict):
             amount = amount_of_money.get("value", 0)
             currency = amount_of_money.get("unit", "None")
         else:
