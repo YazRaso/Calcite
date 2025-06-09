@@ -1,46 +1,32 @@
 rules:
-  - rule: Delete Transaction One Shoot
-    steps:
-      - intent: delete_transaction
-      - slot_was_set:
-          - file_path: true
-          - reference_id: true
-      - action: delete_transaction
-      - active_loop: null
-
-  - rule: Activate Add Transaction Form
+  - rule: Activate Add Transaction
     steps:
       - intent: add_transaction
+      - action: add_transaction_form
       - active_loop: add_transaction_form
 
-  - rule: Add Transaction Form Submit
+  - rule: Submit Add Transaction
     condition:
       - active_loop: add_transaction_form
     steps:
-      - action: add_transaction
+      - action: add_transaction_form
       - active_loop: null
-      - slot_was_set:
-          - time: null
-          - amount_of_money: null
-          - number: null
-          - file_path: null
-          - reference_id: null
+      - action: add_transaction
       - action: utter_transaction_added
 
-  - rule: Activate Delete Transaction Form
+  - rule: Activate Delete Transaction
     steps:
       - intent: delete_transaction
+      - action: delete_transaction_form
       - active_loop: delete_transaction_form
 
-  - rule: Delete Transaction Form Submit
+  - rule: Submit Delete Transaction
     condition:
       - active_loop: delete_transaction_form
     steps:
-      - action: delete_transaction
+      - action: delete_transaction_form
       - active_loop: null
-      - slot_was_set:
-          - file_path: null
-          - reference_id: null
+      - action: delete_transaction
       - action: utter_transaction_deleted
 
   - rule: I do not understand
