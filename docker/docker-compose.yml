@@ -21,9 +21,9 @@ services:
     ports:
       - "5055:5055"
     volumes:
-      - type: bind
-        source: ../sheet_data
-        target: ../sheet_data
+      - type: bind # Mount Path MUST be absolute!
+        source: /sheet_data
+        target: /sheet_data
       - type: bind
         source: ..
         target: /app
