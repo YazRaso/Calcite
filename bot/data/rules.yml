@@ -2,7 +2,6 @@ rules:
   - rule: Activate Add Transaction Form
     steps:
       - intent: add_transaction
-      - action: add_transaction_form
       - active_loop: add_transaction_form
 
   - rule: Add Transaction Form Submit
@@ -22,7 +21,6 @@ rules:
   - rule: Activate Delete Transaction Form
     steps:
       - intent: delete_transaction
-      - action: delete_transaction_form
       - active_loop: delete_transaction_form
 
   - rule: Delete Transaction Form Submit
