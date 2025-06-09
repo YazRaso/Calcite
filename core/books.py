@@ -11,7 +11,7 @@ class ExcelManager:
     Methods:
         load_or_create(): Creates a new Excel workbook if it doesn't exist else loads it.
         add_transaction(
-        amount, currency, conversion_rate, transaction_id, transaction_date, reference_id
+        amount, currency, conversion_rate, , transaction_date, reference_id
         ): Adds a transaction to the Excel workbook.
         delete_transaction(): Deletes a transaction from the Excel workbook.
         check_summary(): checks if the workbook has a summary row
@@ -66,13 +66,12 @@ class ExcelManager:
         return False
 
     def add_transaction(self, amount: float, currency: str, conversion_rate: float,
-                        transaction_id: str, transaction_date: str, reference_id: str) -> None:
+                        transaction_date: str, reference_id: str) -> None:
         """
         Adds a transaction to the last row of Excel workbook.
         :param amount:
         :param currency:
         :param conversion_rate:
-        :param transaction_id:
         :param transaction_date:
         :param reference_id:
         :return: None
@@ -81,7 +80,6 @@ class ExcelManager:
             amount,
             currency,
             conversion_rate,
-            transaction_id,
             transaction_date,
             reference_id
         ]

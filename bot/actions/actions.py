@@ -1,7 +1,6 @@
 from rasa_sdk import Action, Tracker
 from typing import Any, Dict
 import app.core.books as books
-import app.core.id_generator as id_generator
 
 
 class AddTransaction(Action):
@@ -24,17 +23,16 @@ class AddTransaction(Action):
         reference_id = reference_id.strip().lower()
         if "reference" in reference_id:
             reference_id = reference_id.replace("reference", "")
-        transaction_id = id_generator.generate_id()
         time = tracker.get_slot("time")
         dispatcher.utter_message(
-            text=f"Adding transaction with ID: {transaction_id}, "
+            text=f"Adding transaction"
                  f"amount: {amount} {currency}, conversion rate: {conversion_rate}, "
                  f"reference ID: {reference_id}, time: {time}"
         )
         # Append transaction
         current_workbook = books.ExcelManager(file_path) 
         current_workbook.add_transaction(amount=amount, currency=currency, conversion_rate=conversion_rate,
-                                         transaction_id=transaction_id, transaction_date=time)
+                                         transaction_date=time)
 
         if not all([file_path, time, amount, currency, conversion_rate]):
             dispatcher.utter_message(text="Some information is missing. Please try again.")
