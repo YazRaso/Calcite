@@ -18,8 +18,16 @@ class AddTransaction(Action):
             file_path = file_path.replace("EXCEL_FILE", "")
         amount_of_money = tracker.get_slot("amount_of_money")
         if isinstance(amount_of_money, str):
-            amount = " ".split(amount_of_money)[0]
-            currency = " ".split(amount_of_money)[1]
+            if " " in amount_of_money:
+                amount_of_money = amount_of_money.split(" ")
+                amount = amount_of_money[0]
+                currency = amount_of_money[1]
+            else:
+                for i, character in enumerate(amount_of_money):
+                    if character.isalpha():
+                        amount = amount_of_money[:i]
+                        currency = amount_of_money[i:]
+                        break
         elif isinstance(amount_of_money, Dict):
             amount = amount_of_money.get("value", 0)
             currency = amount_of_money.get("unit", "None")
