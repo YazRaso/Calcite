@@ -7,18 +7,6 @@ rules:
           - reference_id: true
       - action: delete_transaction
       - active_loop: null
-  - rule: Add Transaction One Shoot
-    steps:
-      - intent: add_transaction
-      - slot_was_set:
-          - time: true
-          - amount_of_money: true
-          - number: true
-          - file_path: true
-          - reference_id: true
-      - action: add_transaction
-      - action: utter_transaction_added
-      - active_loop: null
 
   - rule: Activate Add Transaction Form
     steps:
