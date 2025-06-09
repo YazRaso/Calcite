@@ -26,7 +26,11 @@ class AddTransaction(Action):
             reference_id = reference_id.replace("reference", "")
         transaction_id = id_generator.generate_id()
         time = tracker.get_slot("time")
-
+        dispatcher.utter_message(
+            text=f"Adding transaction with ID: {transaction_id}, "
+                 f"amount: {amount} {currency}, conversion rate: {conversion_rate}, "
+                 f"reference ID: {reference_id}, time: {time}"
+        )
         # Append transaction
         current_workbook = books.ExcelManager(file_path) 
         current_workbook.add_transaction(amount=amount, currency=currency, conversion_rate=conversion_rate,
