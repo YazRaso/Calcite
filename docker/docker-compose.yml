@@ -24,7 +24,7 @@ services:
       - type: bind
         source: ../sheet_data
         target: /app/sheet
-      - type: volume
+      - type: bind
         source: ..
         target: /app
     command: ["run", "actions", "--actions", "app.bot.actions", "--port", "5055"]
