@@ -1,5 +1,5 @@
 from openpyxl import Workbook, load_workbook
-from receipt import generate_receipt
+from core import receipt
 
 
 class ExcelManager:
@@ -111,7 +111,7 @@ class ExcelManager:
         reference_id = self.ws.cell(row=last_row, column=6).value
         if None in (amount, currency, transaction_date, reference_id):
             return
-        generate_receipt(reference_no=reference_id, amount_paid=amount, currency=currency,
+        receipt.generate_receipt(reference_no=reference_id, amount_paid=amount, currency=currency,
                          date_str=transaction_date)
 
     def save(self) -> None:
