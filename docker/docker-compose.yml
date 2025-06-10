@@ -23,7 +23,7 @@ services:
     volumes:
       - type: bind # Mount Path MUST be absolute!
         source: ../sheet_data
-        target: /opt/rasa_project/app/
+        target: /opt/rasa_project/app/sheet_data
       - type: bind
         source: ..
         target: /app
