@@ -22,11 +22,17 @@ services:
       - "5055:5055"
     volumes:
       - type: bind
-        source: ..
-        target: /app
+        source: ../bot/actions
+        target: /app/bot/actions
+      - type: bind
+        source: ../core
+        target: /app/core
+      - type: bind
+        source: ../sheet_data
+        target: /app/sheet_data
     environment:
       - PYTHONPATH=/app
-    command: ["run", "actions", "--actions", "bot.actions", "--port", "5055"]
+    command: ["run", "actions", "--port", "5055"]
 
   duckling:
     image: rasa/duckling:latest
