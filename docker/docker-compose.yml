@@ -24,9 +24,12 @@ services:
       - type: bind # Mount Path MUST be absolute!
         source: ../sheet_data
         target: /app/sheet_data
+      - type: bind
+        source: ../bot
+        target: /app/bot
     environment:
       - PYTHONPATH=/app
-    command: ["run", "actions", "--actions", "bot.actions", "--port", "5055"]
+    command: ["run", "actions", "--actions", "actions", "--port", "5055"]
 
   duckling:
     image: rasa/duckling:latest
