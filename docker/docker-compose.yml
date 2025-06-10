@@ -32,7 +32,7 @@ services:
         target: /app/sheet_data
     environment:
       - PYTHONPATH=/app
-    command: ["run", "actions", "--port", "5055"]
+    command: ["run", "actions", "--actions", "actions", --port", "5055"]
 
   duckling:
     image: rasa/duckling:latest
