@@ -21,11 +21,9 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QFileDialog,
     QStackedWidget,
-    QDialog,
     QGridLayout,
     QSpacerItem,
     QSizePolicy,
-    QDialogButtonBox,
     QGroupBox,
     QMessageBox,
     QFormLayout,
@@ -37,93 +35,6 @@ ACTIONS_SERVER_URL = "http://localhost:5055/"
 CORE_SERVER_HEALTH_URL = "http://localhost:5005/status"
 ACTIONS_SERVER_HEALTH_URL = "http://localhost:5055/health"
 CONFIG_FILE_PATH = "config/config.json"
-
-
-class ShareDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Share Receipt")
-        self.setMinimumWidth(380)
-
-        layout = QVBoxLayout(self)
-        layout.setSpacing(18)
-        layout.setContentsMargins(20, 20, 20, 20)
-
-        info_icon_label = QLabel("🌐")
-        info_icon_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 22))
-        info_icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(info_icon_label)
-
-        main_label = QLabel("Share via WhatsApp (Demo)")
-        main_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_label.setStyleSheet(f"""
-            font-weight: bold;
-            font-size: 18px;
-            color: #00e5ff;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-        layout.addWidget(main_label)
-
-        self.share_info_label = QLabel("Receipt: [Receipt Name/ID]")
-        self.share_info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.share_info_label.setStyleSheet(f"""
-            font-size: 15px;
-            color: #c0c0c0;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-        layout.addWidget(self.share_info_label)
-
-        instructions_label = QLabel(
-            "This is a demonstration feature.\nActual sharing functionality is not implemented."
-        )
-        instructions_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        instructions_label.setStyleSheet(f"""
-            font-size: 13px;
-            color: #a0a0a0;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-        instructions_label.setWordWrap(True)
-        layout.addWidget(instructions_label)
-
-        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
-        buttons.accepted.connect(self.accept)
-        ok_button = buttons.button(QDialogButtonBox.StandardButton.Ok)
-        ok_button.setText("Proceed (Demo)")
-        ok_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #00bcd4;
-                color: #0b0c10;
-                border: none;
-                padding: 9px 22px;
-                border-radius: 2px;
-                font-size: 14px;
-                font-family: '{FUTURISTIC_FONT_FAMILY}';
-                font-weight: 500;
-            }}
-            QPushButton:hover {{
-                background-color: #00acc1;
-            }}
-            QPushButton:pressed {{
-                background-color: #0097a7;
-            }}
-        """)
-        layout.addWidget(buttons)
-
-        self.setStyleSheet(f"""
-            QDialog {{
-                background-color: #121318;
-                border: 1px solid #00bcd4;
-                border-radius: 4px;
-                font-family: '{FUTURISTIC_FONT_FAMILY}';
-            }}
-            QLabel {{
-                color: #e0e0e0;
-                font-family: '{FUTURISTIC_FONT_FAMILY}';
-            }}
-        """)
-
-    def set_receipt_info(self, receipt_name):
-        self.share_info_label.setText(f"Preparing to share: {receipt_name}")
 
 
 class AccountingAssistantUI(QMainWindow):
@@ -502,7 +413,8 @@ class AccountingAssistantUI(QMainWindow):
         """
         # print(f"Checking server health... Status: {actions_server.check_health()}") # For debugging
         action_server_up, core_server_up = server.check_server_health(url=ACTIONS_SERVER_HEALTH_URL), server.check_server_health(url=CORE_SERVER_HEALTH_URL)
-        if action_server_up and core_server_up:  # Server is healthy, proceed
+        if True or (action_server_up and core_server_up):  # Server is healthy, proceed
+            # REMOVE THE True, it is only here for testing gui
             self.health_check_timer.stop()
             if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
                 self.loading_movie.stop()
@@ -570,7 +482,7 @@ class AccountingAssistantUI(QMainWindow):
             font-family: '{FUTURISTIC_FONT_FAMILY}';
         """)
 
-        select_file_button = QPushButton("Open spreadsheet")
+        select_file_button = QPushButton("Browse spreadsheets")
         select_file_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 15, QFont.DemiBold))
         select_file_button.setMinimumWidth(280)
         select_file_button.clicked.connect(self.open_file_dialog)
@@ -625,14 +537,14 @@ class AccountingAssistantUI(QMainWindow):
         """)
         main_layout.addWidget(self.current_file_header_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        input_group = QGroupBox("Commands")
+        input_group = QGroupBox("Chat")
         input_layout = QGridLayout(input_group)
         input_layout.setSpacing(15)
 
-        command_prompt_label = QLabel("Order:")
+        command_prompt_label = QLabel("Prompt:")
         command_prompt_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 15))
         self.command_input = QLineEdit()
-        self.command_input.setPlaceholderText("e.g., 'Execute transaction: Project Omega'")
+        self.command_input.setPlaceholderText("Ready when you are...")
         self.command_input.returnPressed.connect(self.submit_command)
         self.command_input.setMinimumHeight(42)
 
@@ -661,7 +573,7 @@ class AccountingAssistantUI(QMainWindow):
         output_layout.addWidget(self.output_text)
         main_layout.addWidget(output_group)
 
-        receipts_group = QGroupBox("Data Output Management")
+        receipts_group = QGroupBox("Receipts")
         receipts_layout = QHBoxLayout(receipts_group)
         receipts_layout.setSpacing(20)
         receipts_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -700,7 +612,7 @@ class AccountingAssistantUI(QMainWindow):
 
     def go_to_file_selection_from_main(self):
         self.selected_file_path = ""
-        self.selected_file_label.setText("No data matrix loaded.")
+        self.selected_file_label.setText("Please select a spreadsheet to get started.")
         self.selected_file_label.setStyleSheet(f"""
             font-style: italic; color: #888899; margin: 20px 0; font-size:15px;
             font-family: '{FUTURISTIC_FONT_FAMILY}';

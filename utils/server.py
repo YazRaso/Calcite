@@ -23,9 +23,7 @@ def start_server() -> None:
         subprocess.Popen(["docker", "compose", "build", "--no-cache"],
                          cwd=docker_dir.resolve())
         data["user"]["firstTime"] = False
-        with open(config_file_path, "w") as f:
-            json.dump(data, f, indent=4)
-    subprocess.Popen(["docker-compose", "up"], cwd=docker_dir.resolve())
+    subprocess.Popen(["docker", "compose", "up"], cwd=docker_dir.resolve())
 
 
 def check_server_health(url: str) -> bool:
