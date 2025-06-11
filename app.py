@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 import platform
 import subprocess
-from .core.books import ExcelManager
-from .utils import server
+from core.books import ExcelManager
+from utils import server
 from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, QTimer
 from PySide6.QtGui import QFont, QMovie, QFontDatabase
 from PySide6.QtWidgets import (
@@ -827,5 +827,20 @@ class AccountingAssistantUI(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    
+    # Load fonts
     font_dir_path = QDir.cleanPath(QDir.currentPath() + "/fonts/ttf/")
     font_dir = QDir(font_dir_path)
+    
+    # Add font loading
+    if font_dir.exists():
+        for font_file in font_dir.entryList(["*.ttf"], QDir.Filter.Files):
+            font_path = font_dir.absoluteFilePath(font_file)
+            QFontDatabase.addApplicationFont(font_path)
+    
+    # Create and show the main window
+    window = AccountingAssistantUI()
+    window.show()
+    
+    # Start the event loop
+    sys.exit(app.exec())
