@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 
 
-def start_rasa_container() -> None:
+def start_server() -> None:
     """
     Starts the docker container
     If it is the user's first time running the server,
