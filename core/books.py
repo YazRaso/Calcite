@@ -1,4 +1,4 @@
-from openpyxl import Workbook, load_workbook
+from openpyxl import load_workbook
 from core import receipt
 
 
@@ -10,7 +10,7 @@ class ExcelManager:
     Methods:
         load_or_create(): Creates a new Excel workbook if it doesn't exist else loads it.
         add_transaction(
-        amount, currency, conversion_rate, , transaction_date, reference_id
+        amount, currency, conversion_rate, transaction_date, reference_id
         ): Adds a transaction to the Excel workbook.
         delete_transaction(): Deletes a transaction from the Excel workbook.
         check_summary(): checks if the workbook has a summary row
@@ -24,14 +24,14 @@ class ExcelManager:
         super().__init__()
         self.filepath = filepath
         self.headers = ['Amount', 'Currency',
-                        'Conversion Rate', 'Transaction ID',
-                        'Transaction Date']
+                        'Conversion Rate', 'Transaction Date',
+                        'Reference ID']
 
         self.load_or_create()
 
     def load_or_create(self) -> None:
         """
-        Loads a given Excel workbook, if it doesn't exist then creates one.
+        Loads a given Excel workbook
         :return: None
         """
         self.wb = load_workbook(self.filepath)
@@ -50,7 +50,7 @@ class ExcelManager:
         # The workbook is either empty, or only contains the headers
         if not last_row_idx or last_row_idx <= 1:
             return False
-        possible_words = {"summary", "total", "sum"}  # We could use NLP for this, but that could be overkill.
+        possible_words = {"summary", "total", "sum"}
         for row in self.ws.iter_rows(min_row=2, max_row=last_row_idx, max_col=7):
             for cell in row:
                 if cell.data_type == 'f' or (cell.value and isinstance(cell.value, str)
