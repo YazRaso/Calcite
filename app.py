@@ -412,7 +412,7 @@ class AccountingAssistantUI(QMainWindow):
         - If check_health() is FALSE (server is NOT healthy), THEN WE KEEP LOADING.
         """
         # print(f"Checking server health... Status: {actions_server.check_health()}") # For debugging
-        action_server_up, core_server_up = server.check_server_health(url=ACTIONS_SERVER_HEALTH_URL), server.check_server_health(url=CORE_SERVER_HEALTH_URL)
+        # action_server_up, core_server_up = server.check_server_health(url=ACTIONS_SERVER_HEALTH_URL), server.check_server_health(url=CORE_SERVER_HEALTH_URL)
         if True or (action_server_up and core_server_up):  # Server is healthy, proceed
             # REMOVE THE True, it is only here for testing gui
             self.health_check_timer.stop()
@@ -626,11 +626,11 @@ class AccountingAssistantUI(QMainWindow):
     def go_to_main_interaction(self):
         if self.selected_file_path:
             filename = self.selected_file_path.split('/')[-1]
-            self.current_file_header_label.setText(f"Current Spreadsheet: {filename}")
-            self.output_text.append(f"[SYSTEM] Data Matrix '{self.selected_file_path}' loaded successfully.\n" + "="*40 + "\nSystem ready for directives.\n")
+            self.current_file_header_label.setText(f"Current Spreadsheet:{filename}")
+            self.output_text.append(f"Loaded your file: '{self.selected_file_path}', awaiting your next move")
             self.stacked_widget.setCurrentWidget(self.main_interaction_page)
         else:
-            self.selected_file_label.setText("ALERT: No Data Matrix selected. Load a source to proceed.")
+            self.selected_file_label.setText("Warning: No spreadsheet selected.")
             self.selected_file_label.setStyleSheet(f"""
                 color: #ff4d4d;
                 font-weight: bold; margin-top: 15px; font-size:15px;
