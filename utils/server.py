@@ -12,7 +12,7 @@ def start_server() -> None:
     the docker image will be built first.
     :return: None
     """
-    config_file_path = Path(__file__).parent / "config" / "config.yml"
+    config_file_path = Path(__file__).parent / "config" / "config.json"
     with open(config_file_path, "r") as f:
         data = json.load(f)
         first_time = data["user"]["firstTime"]
