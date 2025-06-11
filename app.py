@@ -1,4 +1,3 @@
-from utils.start_rasa_container import start_rasa_container, check_actions_health
 import requests
 import os
 import sys
@@ -6,9 +5,10 @@ import json
 from pathlib import Path
 import platform
 import subprocess
-from core.books import ExcelManager
+from .core.books import ExcelManager
+from .utils import server
 from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, QTimer
-from PySide6.QtGui import QFont, QMovie, QFontDatabase  # Added QFontDatabase
+from PySide6.QtGui import QFont, QMovie, QFontDatabase
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -34,6 +34,8 @@ from PySide6.QtWidgets import (
 FUTURISTIC_FONT_FAMILY = "JetBrains Mono"
 CORE_SERVER_URL = "http://localhost:5005/webhooks/rest/webhook"
 ACTIONS_SERVER_URL = "http://localhost:5055/"
+CORE_SERVER_HEALTH_URL = "http://localhost:5005/status"
+ACTIONS_SERVER_HEALTH_URL = "http://localhost:5055/health"
 CONFIG_FILE_PATH = "config/config.json"
 
 
@@ -163,9 +165,9 @@ class AccountingAssistantUI(QMainWindow):
             self.health_check_timer = QTimer(self)
             self.health_check_timer.setInterval(500)  # Check health every 500ms
             self.health_check_timer.timeout.connect(self.check_server_status_and_proceed)
-            start_rasa_container()
 
-            self.health_check_timer.start()
+            
+            server.start_server()
             self.check_server_status_and_proceed()  # Perform an initial check
 
     def load_or_initialize_config(self):
@@ -382,7 +384,7 @@ class AccountingAssistantUI(QMainWindow):
             self.signature_path_label.setText(file_name)
             self.signature_path_label.setStyleSheet("color: #e0e0e0; margin-left: 10px;")  # Reset style to normal color
             print(f"Signature file selected: {file_path}")
-
+    # FLAG 1
     def save_first_time_setup(self):
         user_name = self.name_input.text().strip()
 
@@ -410,7 +412,6 @@ class AccountingAssistantUI(QMainWindow):
             self.health_check_timer = QTimer(self)
             self.health_check_timer.setInterval(500)
             self.health_check_timer.timeout.connect(self.check_server_status_and_proceed)
-        start_rasa_container()
 
         self.health_check_timer.start()
         self.check_server_status_and_proceed()
@@ -500,7 +501,8 @@ class AccountingAssistantUI(QMainWindow):
         - If check_health() is FALSE (server is NOT healthy), THEN WE KEEP LOADING.
         """
         # print(f"Checking server health... Status: {actions_server.check_health()}") # For debugging
-        if check_actions_health() :  # Server is healthy, proceed
+        action_server_up, core_server_up = server.check_server_health(url=ACTIONS_SERVER_HEALTH_URL), server.check_server_health(url=CORE_SERVER_HEALTH_URL)
+        if action_server_up and core_server_up:  # Server is healthy, proceed
             self.health_check_timer.stop()
             if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
                 self.loading_movie.stop()
@@ -512,9 +514,6 @@ class AccountingAssistantUI(QMainWindow):
             if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid() and \
                     self.loading_movie.state() != QMovie.MovieState.Running:
                 self.loading_movie.start()
-
-    def show_error_message(self, message: str):
-        QMessageBox.critical(self, "Error", message)
 
     def create_landing_page(self):
         self.landing_page = QWidget()
@@ -770,6 +769,7 @@ class AccountingAssistantUI(QMainWindow):
                 """)
                 self.proceed_button.setEnabled(True)
                 self.output_text.clear()
+                #todo
             else:
                 self.selected_file_path = ""
                 self.selected_file_label.setText("No spreadsheet loaded.")
@@ -827,28 +827,5 @@ class AccountingAssistantUI(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
-    # --- Load custom fonts from application directory ---
     font_dir_path = QDir.cleanPath(QDir.currentPath() + "/fonts/ttf/")
-    # For PyInstaller or similar, QDir.appDirPath() might be better if fonts are bundled next to executable
-    # font_dir_path = QDir.appDirPath() + "/fonts/ttf/"
-
     font_dir = QDir(font_dir_path)
-
-    loaded_font_families = []
-    for font_file in font_dir.entryList(["*.ttf", "*.otf"], QDir.Filter.Files): # Also check for .otf
-        font_path = font_dir.filePath(font_file)
-        font_id = QFontDatabase.addApplicationFont(font_path)
-        if font_id != -1:
-            font_families_for_id = QFontDatabase.applicationFontFamilies(font_id)
-            if font_families_for_id:
-                loaded_font_families.extend(font_families_for_id)
-
-    # Set the global application font AFTER loading custom fonts
-    # and potentially adjusting FUTURISTIC_FONT_FAMILY based on diagnostic prints.
-    default_font = QFont(FUTURISTIC_FONT_FAMILY, 10) # Base size for JetBrains Mono
-    app.setFont(default_font)
-
-    window = AccountingAssistantUI()
-    window.show()
-    sys.exit(app.exec())

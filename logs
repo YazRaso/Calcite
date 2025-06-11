@@ -1,0 +1,129 @@
+ 2 warnings found (use docker --debug to expand):
+ - UndefinedVar: Usage of undefined variable '$PYTHONPATH' (line 7)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 7)
+Creating my_rasa_actions ... done
+Creating duckling        ... done
+Creating my_rasa_server  ... done
+Attaching to duckling, my_rasa_actions, my_rasa_server
+duckling    | Listening on http://0.0.0.0:8000
+my_rasa_actions | /opt/venv/lib/python3.10/site-packages/rasa/core/tracker_store.py:1044: MovedIn20Warning: Deprecated API features detected! These feature(s) are not compatible with SQLAlchemy 2.0. To prevent incompatible upgrades prior to updating applications, ensure requirements files are pinned to "sqlalchemy<2.0". Set environment variable SQLALCHEMY_WARN_20=1 to show all deprecation warnings.  Set environment variable SQLALCHEMY_SILENCE_UBER_WARNING=1 to silence this message. (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+my_rasa_actions |   Base: DeclarativeMeta = declarative_base()
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/rasa/core/tracker_store.py:1044: MovedIn20Warning: Deprecated API features detected! These feature(s) are not compatible with SQLAlchemy 2.0. To prevent incompatible upgrades prior to updating applications, ensure requirements files are pinned to "sqlalchemy<2.0". Set environment variable SQLALCHEMY_WARN_20=1 to show all deprecation warnings.  Set environment variable SQLALCHEMY_SILENCE_UBER_WARNING=1 to silence this message. (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+my_rasa_server |   Base: DeclarativeMeta = declarative_base()
+my_rasa_server | 2025-06-10 06:41:47 DEBUG    rasa.telemetry  - Could not read telemetry settings from configuration file: Configuration 'metrics' key not found.
+my_rasa_actions | /opt/venv/lib/python3.10/site-packages/rasa/shared/utils/validation.py:134: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+my_rasa_actions |   import pkg_resources
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/rasa/shared/utils/validation.py:134: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+my_rasa_server |   import pkg_resources
+my_rasa_actions | /opt/venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+my_rasa_actions | Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+my_rasa_actions |   declare_namespace(pkg)
+my_rasa_actions | /opt/venv/lib/python3.10/site-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('mpl_toolkits')`.
+my_rasa_actions | Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+my_rasa_actions |   declare_namespace(pkg)
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+my_rasa_server | Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+my_rasa_server |   declare_namespace(pkg)
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('mpl_toolkits')`.
+my_rasa_server | Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+my_rasa_server |   declare_namespace(pkg)
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel')`.
+my_rasa_server | Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+my_rasa_server |   declare_namespace(pkg)
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel.yaml')`.
+my_rasa_server | Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+my_rasa_server |   declare_namespace(pkg)
+my_rasa_actions | /opt/venv/lib/python3.10/site-packages/sanic_cors/extension.py:39: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+my_rasa_actions |   SANIC_VERSION = LooseVersion(sanic_version)
+my_rasa_actions | 2025-06-10 06:41:47 INFO     rasa_sdk.endpoint  - Starting action endpoint server...
+my_rasa_actions | /opt/venv/lib/python3.10/site-packages/sanic/log.py:89: DeprecationWarning: [DEPRECATION v22.6] Setting the ErrorHandler fallback value directly is deprecated and no longer supported. This feature will be removed in v22.6. Instead, use app.config.FALLBACK_ERROR_FORMAT.
+my_rasa_actions |   warn(version_info + message, DeprecationWarning)
+my_rasa_server | <frozen importlib._bootstrap>:283: DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/sanic_cors/extension.py:39: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+my_rasa_server |   SANIC_VERSION = LooseVersion(sanic_version)
+my_rasa_actions | 2025-06-10 06:41:47 INFO     rasa_sdk.executor  - Registered function for 'add_transaction'.
+my_rasa_actions | 2025-06-10 06:41:47 INFO     rasa_sdk.executor  - Registered function for 'delete_transaction'.
+my_rasa_actions | 2025-06-10 06:41:47 INFO     rasa_sdk.endpoint  - Starting plugins...
+my_rasa_actions | 2025-06-10 06:41:47 INFO     rasa_sdk.endpoint  - Action endpoint is up and running on http://0.0.0.0:5055
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/future/standard_library/__init__.py:65: DeprecationWarning: the imp module is deprecated in favour of importlib and slated for removal in Python 3.12; see the module's documentation for alternative uses
+my_rasa_server |   import imp
+my_rasa_server | 2025-06-10 06:41:55 DEBUG    h5py._conv  - Creating converter from 7 to 5
+my_rasa_server | 2025-06-10 06:41:55 DEBUG    h5py._conv  - Creating converter from 5 to 7
+my_rasa_server | 2025-06-10 06:41:55 DEBUG    h5py._conv  - Creating converter from 7 to 5
+my_rasa_server | 2025-06-10 06:41:55 DEBUG    h5py._conv  - Creating converter from 5 to 7
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/keras/utils/data_utils.py:206: DeprecationWarning: invalid escape sequence '\ '
+my_rasa_server |   """Downloads a file from a URL if it not already in the cache.
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/keras/utils/vis_utils.py:285: DeprecationWarning: invalid escape sequence '\{'
+my_rasa_server |   .replace("{", "\{")
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/keras/utils/vis_utils.py:286: DeprecationWarning: invalid escape sequence '\}'
+my_rasa_server |   .replace("}", "\}")
+my_rasa_server | <frozen importlib._bootstrap>:283: DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+my_rasa_server | 2025-06-10 06:42:05 DEBUG    rasa.core.utils  - Available web server routes:
+my_rasa_server | /conversations/<conversation_id:path>/messages     POST                           add_message
+my_rasa_server | /conversations/<conversation_id:path>/tracker/events POST                           append_events
+my_rasa_server | /webhooks/rest                                     GET                            custom_webhook_RestInput.health
+my_rasa_server | /webhooks/rest/webhook                             POST                           custom_webhook_RestInput.receive
+my_rasa_server | /model/test/intents                                POST                           evaluate_intents
+my_rasa_server | /model/test/stories                                POST                           evaluate_stories
+my_rasa_server | /conversations/<conversation_id:path>/execute      POST                           execute_action
+my_rasa_server | /domain                                            GET                            get_domain
+my_rasa_server | /                                                  GET                            hello
+my_rasa_server | /model                                             PUT                            load_model
+my_rasa_server | /model/parse                                       POST                           parse
+my_rasa_server | /conversations/<conversation_id:path>/predict      POST                           predict
+my_rasa_server | /conversations/<conversation_id:path>/tracker/events PUT                            replace_events
+my_rasa_server | /conversations/<conversation_id:path>/story        GET                            retrieve_story
+my_rasa_server | /conversations/<conversation_id:path>/tracker      GET                            retrieve_tracker
+my_rasa_server | /status                                            GET                            status
+my_rasa_server | /model/predict                                     POST                           tracker_predict
+my_rasa_server | /model/train                                       POST                           train
+my_rasa_server | /conversations/<conversation_id:path>/trigger_intent POST                           trigger_intent
+my_rasa_server | /model                                             DELETE                         unload_model
+my_rasa_server | /version                                           GET                            version
+my_rasa_server | 2025-06-10 06:42:05 INFO     root  - Starting Rasa server on http://0.0.0.0:5005
+my_rasa_server | 2025-06-10 06:42:05 DEBUG    rasa.core.utils  - Using the default number of Sanic workers (1).
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/rasa/shared/core/slot_mappings.py:224: UserWarning: Slot auto-fill has been removed in 3.0 and replaced with a new explicit mechanism to set slots. Please refer to https://rasa.com/docs/rasa/domain#slots to learn more.
+my_rasa_server |   rasa.shared.utils.io.raise_warning(
+my_rasa_server | 2025-06-10 06:42:05 DEBUG    rasa.telemetry  - Skipping request to external service: telemetry key not set.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.core.tracker_store  - Connected to InMemoryTrackerStore.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.core.lock_store  - Connected to lock store 'InMemoryLockStore'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.core.nlg.generator  - Instantiated NLG to 'TemplatedNaturalLanguageGenerator'.
+my_rasa_server | 2025-06-10 06:42:06 INFO     rasa.core.processor  - Loading model /app/bot/models/20250610-063919-lime-overtone.tar.gz...
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.storage.local_model_storage  - Extracted model to '/tmp/tmpnww64j0a'.
+my_rasa_server | /opt/venv/lib/python3.10/site-packages/rasa/shared/core/slot_mappings.py:224: UserWarning: Slot auto-fill has been removed in 3.0 and replaced with a new explicit mechanism to set slots. Please refer to https://rasa.com/docs/rasa/domain#slots to learn more.
+my_rasa_server |   rasa.shared.utils.io.raise_warning(
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.graph  - Node 'nlu_message_converter' loading 'NLUMessageConverter.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.graph  - Node 'run_WhitespaceTokenizer0' loading 'WhitespaceTokenizer.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.graph  - Node 'run_RegexEntityExtractor1' loading 'RegexEntityExtractor.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_RegexEntityExtractor1' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.graph  - Node 'run_RegexFeaturizer2' loading 'RegexFeaturizer.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_RegexFeaturizer2' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.graph  - Node 'run_CountVectorsFeaturizer3' loading 'CountVectorsFeaturizer.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_CountVectorsFeaturizer3' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.graph  - Node 'run_DIETClassifier4' loading 'DIETClassifier.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_DIETClassifier4' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.utils.tensorflow.models  - Loading the model from /tmp/tmpq5k4l786/train_DIETClassifier4/DIETClassifier.tf_model with finetune_mode=False...
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.nlu.classifiers.diet_classifier  - Following metrics will be logged during training:
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.nlu.classifiers.diet_classifier  -   t_loss (total loss)
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.nlu.classifiers.diet_classifier  -   i_acc (intent acc)
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.nlu.classifiers.diet_classifier  -   i_loss (intent loss)
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.nlu.classifiers.diet_classifier  -   e_f1 (entity f1)
+my_rasa_server | 2025-06-10 06:42:06 DEBUG    rasa.nlu.classifiers.diet_classifier  -   e_loss (entity loss)
+my_rasa_server | /usr/lib/python3.10/random.py:370: DeprecationWarning: non-integer arguments to randrange() have been deprecated since Python 3.10 and will be removed in a subsequent version
+my_rasa_server |   return self.randrange(a, b+1)
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.utils.tensorflow.models  - Finished loading the model.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'run_EntitySynonymMapper5' loading 'EntitySynonymMapper.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_EntitySynonymMapper5' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'run_DucklingEntityExtractor6' loading 'DucklingEntityExtractor.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'run_FallbackClassifier7' loading 'FallbackClassifier.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'run_RegexMessageHandler' loading 'RegexMessageHandler.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'domain_provider' loading 'DomainProvider.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'domain_provider' was requested for reading.
+my_rasa_server | <frozen importlib._bootstrap>:283: DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'run_RulePolicy0' loading 'RulePolicy.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_RulePolicy0' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'rule_only_data_provider' loading 'RuleOnlyDataProvider.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.storage.local_model_storage  - Resource 'train_RulePolicy0' was requested for reading.
+my_rasa_server | 2025-06-10 06:42:58 DEBUG    rasa.engine.graph  - Node 'select_prediction' loading 'DefaultPolicyPredictionEnsemble.load' and kwargs: '{}'.
+my_rasa_server | 2025-06-10 06:42:58 INFO     root  - Rasa server is up and running.
+my_rasa_server | 2025-06-10 06:42:58 INFO     root  - Enabling coroutine debugging. Loop id 104832007182640.
