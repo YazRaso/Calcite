@@ -34,7 +34,7 @@ CORE_SERVER_URL = "http://localhost:5005/webhooks/rest/webhook"
 ACTIONS_SERVER_URL = "http://localhost:5055/"
 CORE_SERVER_HEALTH_URL = "http://localhost:5005/status"
 ACTIONS_SERVER_HEALTH_URL = "http://localhost:5055/health"
-CONFIG_FILE_PATH = "config/config.json"
+CONFIG_FILE_PATH = (Path(__file__).parent / "config" / "config.json").resolve()
 
 
 class AccountingAssistantUI(QMainWindow):
@@ -44,42 +44,25 @@ class AccountingAssistantUI(QMainWindow):
         self.setGeometry(100, 100, 850, 700)
         self.file_name = None
         self.config = {}
-        self.selected_signature_path = ""  # For first-time setup
-
-        self.load_or_initialize_config()  # Load or create config.json
-
+        self.selected_signature_path = ""
         self.apply_global_styles()
 
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
 
-        self.current_receipt_name = ""
-
-        # Create ALL pages that might be needed.
-        # The first_time_setup_page is created regardless; its display is conditional.
-        self.create_first_time_setup_page()
         self.create_loading_screen()
         self.create_landing_page()
         self.create_file_selection_page()
         self.create_main_interaction_page()
-
         # Determine initial page and setup based on firstTime status
         if self.config.get("user", {}).get("firstTime", True):
+            self.create_first_time_setup_page()
             self.stacked_widget.setCurrentWidget(self.first_time_setup_page)
             # Server startup and health check will be initiated after setup completion.
         else:
             self.stacked_widget.setCurrentWidget(self.loading_page)
             if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
                 self.loading_movie.start()
-
-            # If not first time, initialize and configure the health check timer immediately
-            self.health_check_timer = QTimer(self)
-            self.health_check_timer.setInterval(500)  # Check health every 500ms
-            self.health_check_timer.timeout.connect(self.check_server_status_and_proceed)
-
-            
-            server.start_server()
-            self.check_server_status_and_proceed()  # Perform an initial check
 
     def load_or_initialize_config(self):
         default_config = {
@@ -627,7 +610,7 @@ class AccountingAssistantUI(QMainWindow):
         if self.selected_file_path:
             filename = self.selected_file_path.split('/')[-1]
             self.current_file_header_label.setText(f"Current Spreadsheet:{filename}")
-            self.output_text.append(f"Loaded your file: '{self.selected_file_path}', awaiting your next move")
+            self.output_text.append(f"Loaded your file: '{filename}', awaiting your next move - Calcite")
             self.stacked_widget.setCurrentWidget(self.main_interaction_page)
         else:
             self.selected_file_label.setText("Warning: No spreadsheet selected.")
@@ -695,7 +678,7 @@ class AccountingAssistantUI(QMainWindow):
         command_text = self.command_input.text().strip()
         if command_text:
             self.output_text.append(f"User: {command_text}")
-            command_text += f"to EXCEL_FILE_PATH:{self.selected_file_path}"
+            command_text += f"to EXCEL_FILE_PATH/app/sheet_data/{filename}"
             # Now we have to make a call to the api
             response = requests.post(url=CORE_SERVER_URL,
                                      json={"sender": "user1",
@@ -739,20 +722,16 @@ class AccountingAssistantUI(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    
     # Load fonts
     font_dir_path = QDir.cleanPath(QDir.currentPath() + "/fonts/ttf/")
     font_dir = QDir(font_dir_path)
-    
     # Add font loading
     if font_dir.exists():
         for font_file in font_dir.entryList(["*.ttf"], QDir.Filter.Files):
             font_path = font_dir.absoluteFilePath(font_file)
             QFontDatabase.addApplicationFont(font_path)
-    
     # Create and show the main window
     window = AccountingAssistantUI()
     window.show()
-    
     # Start the event loop
     sys.exit(app.exec())
