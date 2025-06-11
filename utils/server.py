@@ -12,12 +12,12 @@ def start_server() -> None:
     the docker image will be built first.
     :return: None
     """
-    config_file_path = Path(__file__).parent / "config" / "config.json"
+    config_file_path = Path(__file__).parent.parent / "config" / "config.json"
     with open(config_file_path, "r") as f:
         data = json.load(f)
         first_time = data["user"]["firstTime"]
 
-    docker_dir = Path(__file__).parent / "docker"
+    docker_dir = Path(__file__).parent.parent / "docker"
     if first_time:
         # if first time build the docker image
         subprocess.Popen(["docker", "compose", "build", "--no-cache"],
