@@ -105,10 +105,12 @@ class AccountingAssistantUI(QMainWindow):
         server.start_server()
         # Check if the servers are up
         # TODO: Remove short circuit true once done testing
-        if True or (server.check_server_health(
-                    ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
-                    CORE_SERVER_HEALTH_URL)):
-               self.stacked_widget.setCurrentWidget(self.landing_page)
+       # if False and (server.check_server_health(
+        #            ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
+         #           CORE_SERVER_HEALTH_URL)):
+          #     self.stacked_widget.setCurrentWidget(self.landing_page)
+        if False:
+            self.stacked_widget.setCurrentWidget(self.error_page)
         else:
             self.stacked_widget.setCurrentWidget(self.error_page)
 
@@ -214,6 +216,7 @@ class AccountingAssistantUI(QMainWindow):
         layout.addWidget(label)
         layout.addWidget(retry_button, alignment=Qt.AlignCenter)
         layout.addStretch()
+        self.stacked_widget.addWidget(self.error_page)
 
     def create_landing_page(self):
         self.landing_page = QWidget()
