@@ -7,7 +7,7 @@ import platform
 import subprocess
 from core.books import ExcelManager
 from utils import server
-from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, QTimer
+from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, Slot, QTimer
 from PySide6.QtGui import QFont, QMovie, QFontDatabase
 from PySide6.QtWidgets import (
     QApplication,
@@ -37,6 +37,28 @@ CORE_SERVER_HEALTH_URL = "http://localhost:5005/status"
 ACTIONS_SERVER_HEALTH_URL = "http://localhost:5055/health"
 CONFIG_FILE_PATH = (Path(__file__).parent / "config" / "config.json").resolve()
 
+# Styles
+COLORS = {
+    "light": {
+        "primary": "#2DD4BF",
+        "text": "#0F4C75",
+        "bg": "#F8F9FA",
+        "card": "#FFFFFF",
+        "border": "#E9ECEF",
+        "success": "#4AD66D",
+        "warning": "#FF9F1C"
+    },
+    "dark": {
+        "primary": "#2DD4BF",  # Keep teal as accent in dark mode
+        "text": "#E9ECEF",
+        "bg": "#121212",
+        "card": "#1E1E1E",
+        "border": "#2D2D2D",
+        "success": "#4AD66D",
+        "warning": "#FF9F1C"
+    }
+}
+
 
 class AccountingAssistantUI(QMainWindow):
     def __init__(self):
@@ -44,10 +66,13 @@ class AccountingAssistantUI(QMainWindow):
         self.setWindowTitle("Calcite - No Code Accounting")
         self.setGeometry(100, 100, 850, 700)
         self.file_name = None
+        self.current_theme = "light"
         self.config = {}
         self.selected_signature_path = ""
         # self.apply_global_styles()
 
+        self.setup_theme_system()
+        self.toggle_theme()
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
 
@@ -59,6 +84,17 @@ class AccountingAssistantUI(QMainWindow):
         self.load_or_initialize_config()
         self.stacked_widget.addWidget(self.loading_page)
         self.initialize_system()
+
+    def setup_theme_system(self):
+        """Initialize theme toggle and signal connections"""
+        # Add toggle button to a persistent area (e.g., status bar)
+        self.theme_toggle = QPushButton("🌙 Dark Mode")
+        self.theme_toggle.setCheckable(True)
+        self.theme_toggle.setFixedSize(120, 40)
+        self.theme_toggle.clicked.connect(self.toggle_theme)
+        
+        # Add to status bar (or your app's header/navigation)
+        self.statusBar().addPermanentWidget(self.theme_toggle)
 
     def initialize_system(self):
         # Show loading screenn
@@ -73,6 +109,72 @@ class AccountingAssistantUI(QMainWindow):
                self.stacked_widget.setCurrentWidget(self.landing_page)
         else:
             self.stacked_widget.setCurrentWidget(self.error_page)
+
+    @Slot()
+    def toggle_theme(self):
+        """Toggle between light and dark themes"""
+        self.current_theme = "dark" if self.current_theme == "light" else "light"
+        self.update_theme()
+        
+        # Update button text
+        icon = "☀️" if self.current_theme == "dark" else "🌙"
+        self.theme_toggle.setText(f"{icon} {'Light' if self.current_theme == 'dark' else 'Dark'} Mode")
+
+    def update_theme(self):
+        """Update all styles based on current theme"""
+        colors = COLORS[self.current_theme]
+        
+        stylesheet = f"""
+            QWidget {{
+                background-color: {colors['bg']};
+                color: {colors['text']};
+                font-family: "{FUTURISTIC_FONT_FAMILY}";
+            }}
+            
+            QPushButton {{
+                background-color: {colors['primary']};
+                color: white;
+                border-radius: 8px;
+                padding: 10px 20px;
+                font-weight: bold;
+                border: none;
+            }}
+            
+            QPushButton:hover {{
+                background-color: #25B9A6;
+            }}
+            
+            QPushButton.secondary {{
+                background-color: {colors['text']};
+            }}
+            
+            QPushButton.success {{
+                background-color: {colors['success']};
+            }}
+            
+            QFrame.data-card, QWidget.dashboard-widget {{
+                background-color: {colors['card']};
+                border: 1px solid {colors['border']};
+                border-radius: 12px;
+            }}
+            
+            QLabel.header {{
+                font-size: 18px;
+                font-weight: bold;
+                color: {colors['primary']};
+            }}
+        """
+        
+        self.setStyleSheet(stylesheet)
+        
+        # Update toggle button style to stand out
+        self.theme_toggle.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {colors['card']};
+                color: {colors['text']};
+                border: 1px solid {colors['border']};
+            }}
+        """)
 
     def create_loading_screen(self):
         self.loading_page = QWidget()
@@ -240,15 +342,17 @@ class AccountingAssistantUI(QMainWindow):
         file_dialog = QFileDialog(self)
         file_dialog.setWindowTitle("Select Spreadsheet")
         file_dialog.setNameFilter("Excel Files (*.xlsx *.xls *xlsm)")
-        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         documents_path = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)[0]
         file_dialog.setDirectory(documents_path)
 
         if file_dialog.exec():
             selected_files = file_dialog.selectedFiles()
             if selected_files:
+                # Get the short name of the excel file
                 self.file_name = selected_files[0]
-                self.selected_file_label.setText(f"Selected file: {self.file_name}")
+                display_file_name = selected_files[0].split('/')[-1]
+                self.selected_file_label.setText(f"Selected file: {display_file_name}")
                 self.next_button.setEnabled(True)
             else:
                 self.selected_file_label.setText("Please select a file to get started")
