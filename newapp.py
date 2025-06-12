@@ -218,22 +218,23 @@ class AccountingAssistantUI(QMainWindow):
     def create_landing_page(self):
         self.landing_page = QWidget()
         layout = QVBoxLayout(self.landing_page)
-        title_label = QLabel("Welcome to Calcite - No Code Accounting")
-        title_label.setAlignment(Qt.AlignCenter)
-        title_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 24, QFont.Bold))
-        layout.addWidget(title_label)
-
+        layout.setSpacing(5)
         description_label = QLabel(
-            "Calcite is a no-code accounting assistant that helps you manage your finances effortlessly."
+            "Calcite AI: Your personal accountant — on your desktop, 24/7"
         )
+
+        description_label.setFont(QFont(
+            FUTURISTIC_FONT_FAMILY, 16, QFont.Bold)
+                                  )
         description_label.setAlignment(Qt.AlignCenter)
         description_label.setWordWrap(True)
         layout.addWidget(description_label)
 
         start_button = QPushButton("Get Started")
+        start_button.setFixedSize(200, 75)
+        start_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         start_button.clicked.connect(self.go_to_file_selection_page)
-        layout.addWidget(start_button)
-
+        layout.addWidget(start_button, alignment=Qt.AlignCenter)
         self.stacked_widget.addWidget(self.landing_page)
 
     def create_file_selection_page(self):
