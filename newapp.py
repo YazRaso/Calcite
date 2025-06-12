@@ -46,7 +46,7 @@ class AccountingAssistantUI(QMainWindow):
         self.file_name = None
         self.config = {}
         self.selected_signature_path = ""
-        self.apply_global_styles()
+        # self.apply_global_styles()
 
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
@@ -58,7 +58,7 @@ class AccountingAssistantUI(QMainWindow):
         self.load_or_initialize_config()
         self.stacked_widget.setCurrentWidget(self.loading_page)
 
-   def create_loading_screen(self):
+    def create_loading_screen(self):
         self.loading_page = QWidget()
         layout = QVBoxLayout(self.loading_page)
         self.loading_label = QLabel("Loading...")
@@ -88,7 +88,7 @@ class AccountingAssistantUI(QMainWindow):
         layout.addWidget(description_label)
 
         start_button = QPushButton("Get Started")
-        start_button.clicked.connect(self.on_start_button_clicked)
+        start_button.clicked.connect(self.go_to_file_selection_page)
         layout.addWidget(start_button)
 
         self.stacked_widget.addWidget(self.landing_page)
@@ -112,11 +112,11 @@ class AccountingAssistantUI(QMainWindow):
         # Create next button
         self.next_button = QPushButton("Next")
         self.next_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-        self.next_button.clicked.connect(self.on_next_button_clicked)
+        self.next_button.clicked.connect(self.go_to_main_interaction_page)
         # Create back button
         self.back_button = QPushButton("Back")
         self.back_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.clicked.connect(self.go_to_landing_page)
         # Layout created widgets
         layout.addWidget(title_label)
         layout.addWidget(select_button)
@@ -125,73 +125,73 @@ class AccountingAssistantUI(QMainWindow):
         layout.addWidget(self.back_button)
         self.stacked_widget.addWidget(self.file_selection_page)
 
-   def create_main_interaction_page(self):
-       self.main_interaction_page = QWidget()
-       main_layout = QVBoxLayout(self.main_interaction_page)
-       main_layout.setContentsMargins(50, 50, 50, 50)
-       main_layout.setSpacing(25)
+    def create_main_interaction_page(self):
+        self.main_interaction_page = QWidget()
+        main_layout = QVBoxLayout(self.main_interaction_page)
+        main_layout.setContentsMargins(50, 50, 50, 50)
+        main_layout.setSpacing(25)
 
-       self.current_file_header_label = QLabel("Spreadsheet")
-       self.current_file_header_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 24, QFont.Bold))
-       main_layout.addWidget(self.current_file_header_label, alignment=Qt.AlignCenter)
+        self.current_file_header_label = QLabel("Spreadsheet")
+        self.current_file_header_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 24, QFont.Bold))
+        main_layout.addWidget(self.current_file_header_label, alignment=Qt.AlignCenter)
 
-       input_group = QGroupBox("Chat")
-       input_layout = QGridLayout(input_group)
-       input_layout.setSpacing(15)
+        input_group = QGroupBox("Chat")
+        input_layout = QGridLayout(input_group)
+        input_layout.setSpacing(15)
 
-       prompt_label = QLabel("Prompt")
-       prompt_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-       self.prompt_input = QLineEdit()
-       self.prompt_input.setPlaceholderText("Add a transaction of 30 AED, reference 200, for today at rate of 2.7")
+        prompt_label = QLabel("Prompt")
+        prompt_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        self.prompt_input = QLineEdit()
+        self.prompt_input.setPlaceholderText("Add a transaction of 30 AED, reference 200, for today at rate of 2.7")
 
-       submit_button = QPushButton("Send")
-       submit_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-       submit_button.clicked.connect(self.on_submit_button_clicked)
+        submit_button = QPushButton("Send")
+        submit_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        submit_button.clicked.connect(self.on_submit_button_clicked)
 
-       input_layout.addWidget(prompt_label, 0, 0)
-       input_layout.addWidget(self.prompt_input, 0, 1)
-       input_layout.addWidget(submit_button, 0, 2, Qt.AlignRight)
+        input_layout.addWidget(prompt_label, 0, 0)
+        input_layout.addWidget(self.prompt_input, 0, 1)
+        input_layout.addWidget(submit_button, 0, 2, Qt.AlignRight)
 
-       main.layout.addWidget(input_group)
+        main_layout.addWidget(input_group)
 
-       output_group = QGroupBox("Calcite")
-       output_layout = QVBoxLayout(output_group)
-       output_layout.setSpacing(15)
+        output_group = QGroupBox("Calcite")
+        output_layout = QVBoxLayout(output_group)
+        output_layout.setSpacing(15)
 
-       self.output_text = QTextEdit()
-       self.output_text.setReadOnly(True)
-       self.output_text.setPlaceholderText("Ready when you are - Calcite")
-       self.output_text.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14))
+        self.output_text = QTextEdit()
+        self.output_text.setReadOnly(True)
+        self.output_text.setPlaceholderText("Ready when you are - Calcite")
+        self.output_text.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14))
 
-       output_layout.addWidget(self.output_text)
-       main_layout.addWidget(output_group)
+        output_layout.addWidget(self.output_text)
+        main_layout.addWidget(output_group)
 
-       receipts_group = QGroupBox("Receipts")
-       receipts_layouy = QHBoxLayout(receipts_group)
-       receipts_layout.setSpacing(15)
+        receipts_group = QGroupBox("Receipts")
+        receipts_layout = QHBoxLayout(receipts_group)
+        receipts_layout.setSpacing(15)
 
-       self.generate_receipt_button = QPushButton("Generate Receipt")
-       self.generate_receipt_button.clicked.connect(self.on_generate_receipt_button_clicked)
-       self.generate_receipt_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        self.generate_receipt_button = QPushButton("Generate Receipt")
+        self.generate_receipt_button.clicked.connect(self.on_generate_receipt_button_clicked)
+        self.generate_receipt_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
 
-       self.past_receipts_button = QPushButton("Past Receipts")
-       self.past_receipts_button.clicked.connect(self.on_past_receipts_button_clicked)
-       self.past_receipts_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        self.past_receipts_button = QPushButton("Past Receipts")
+        self.past_receipts_button.clicked.connect(self.on_past_receipts_button_clicked)
+        self.past_receipts_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
 
-       receipts_layout.addWidget(self.generate_receipt_button)
-       receipts_layout.addWidget(self.past_receipts_button)
+        receipts_layout.addWidget(self.generate_receipt_button)
+        receipts_layout.addWidget(self.past_receipts_button)
 
-       main_layout.addWidget(receipts_group)
+        main_layout.addWidget(receipts_group)
 
-       back_button = QPushButton("Back")
-       back_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-       back_button.clicked.connect(self.go_to_landing_page)
+        back_button = QPushButton("Back")
+        back_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        back_button.clicked.connect(self.go_to_file_selection_page)
 
-       main_layout.addWidget(back_button, alignment=Qt.AlignCenter)
-       self.stacked_widget.addWidget(self.main_interaction_page)
+        main_layout.addWidget(back_button, alignment=Qt.AlignCenter)
+        self.stacked_widget.addWidget(self.main_interaction_page)
 
-    def go_to_landing_page(self)
-        self.stacked_widget.setCurrentWidget(self.landing_page):
+    def go_to_landing_page(self):
+        self.stacked_widget.setCurrentWidget(self.landing_page)
     
     def go_to_file_selection_page(self):
         self.stacked_widget.setCurrentWidget(self.file_selection_page)
