@@ -30,7 +30,6 @@ from PySide6.QtWidgets import (
     QProgressBar
 )
 
-
 FUTURISTIC_FONT_FAMILY = "JetBrains Mono"
 CORE_SERVER_URL = "http://localhost:5005/webhooks/rest/webhook"
 ACTIONS_SERVER_URL = "http://localhost:5055/"
@@ -53,12 +52,27 @@ class AccountingAssistantUI(QMainWindow):
         self.setCentralWidget(self.stacked_widget)
 
         self.create_loading_screen()
+        self.create_error_page()
         self.create_landing_page()
         self.create_file_selection_page()
         self.create_main_interaction_page()
         self.load_or_initialize_config()
         self.stacked_widget.addWidget(self.loading_page)
+        self.initialize_system()
+
+    def initialize_system(self):
+        # Show loading screenn
         self.stacked_widget.setCurrentWidget(self.loading_page)
+        # Boot up servers
+        server.start_server()
+        # Check if the servers are up
+        # TODO: Remove short circuit true once done testing
+        if True or (server.check_server_health(
+                    ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
+                    CORE_SERVER_HEALTH_URL)):
+               self.stacked_widget.setCurrentWidget(self.landing_page)
+        else:
+            self.stacked_widget.setCurrentWidget(self.error_page)
 
     def create_loading_screen(self):
         self.loading_page = QWidget()
@@ -75,6 +89,23 @@ class AccountingAssistantUI(QMainWindow):
         layout.addStretch()
         layout.addWidget(label)
         layout.addWidget(progress)
+        layout.addStretch()
+
+    def create_error_page(self):
+        self.error_page = QWidget()
+        layout = QVBoxLayout(self.error_page)
+
+        label = QLabel("⚠️ System failed to load server!")
+        label.setAlignment(Qt.AlignCenter)
+        label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 20, QFont.Bold))
+
+        retry_button = QPushButton("Retry")
+        retry_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        retry_button.clicked.connect(self.initialize_system)
+
+        layout.addStretch()
+        layout.addWidget(label)
+        layout.addWidget(retry_button, alignment=Qt.AlignCenter)
         layout.addStretch()
 
     def create_landing_page(self):
@@ -117,6 +148,7 @@ class AccountingAssistantUI(QMainWindow):
         # Create next button
         self.next_button = QPushButton("Next")
         self.next_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
+        self.next_button.setEnabled(False)
         self.next_button.clicked.connect(self.go_to_main_interaction_page)
         # Create back button
         self.back_button = QPushButton("Back")
@@ -220,7 +252,6 @@ class AccountingAssistantUI(QMainWindow):
                 self.next_button.setEnabled(True)
             else:
                 self.selected_file_label.setText("Please select a file to get started")
-                self.next_button.setEnabled(False)
 
     def on_submit_button_clicked(self):
         pass

@@ -3,6 +3,8 @@ import requests
 import time
 from pathlib import Path
 import json
+import aiohttp
+import asyncio
 
 
 def start_server() -> None:
@@ -26,18 +28,19 @@ def start_server() -> None:
     subprocess.Popen(["docker", "compose", "up"], cwd=docker_dir.resolve())
 
 
-def check_server_health(url: str) -> bool:
+async def check_server_health(url: str) -> bool:
     """
     Checks if the server is healthy
     :param url: URL to poll
     :return: True if healthy, False otherwise
     """
-    for _ in range(300):
-        try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                return True
-        except requests.ConnectionError:
-            pass
-        time.sleep(1)
+    async with aiohttp.ClientSession() as session:
+        for _ in range(300):
+            try:
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        return True
+            except aiohttp.ClientConnectionError:
+                pass
+            await asyncio.sleep(1)
     return False
