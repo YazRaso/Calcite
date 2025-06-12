@@ -117,11 +117,12 @@ class AccountingAssistantUI(QMainWindow):
         self.update_theme()
         
         # Update button text
-        icon = "☀️" if self.current_theme == "dark" else "🌙"
-        self.theme_toggle.setText(f"{icon} {'Light' if self.current_theme == 'dark' else 'Dark'} Mode")
+        icon = "☀️" if self.current_theme == "light" else "🌙"
+        self.theme_toggle.setText(f"{icon} {'Dark' if self.current_theme == 'dark' else 'Light'} Mode")
 
     def update_theme(self):
         """Update all styles based on current theme"""
+        print("I was pressed!")
         colors = COLORS[self.current_theme]
         
         stylesheet = f"""
