@@ -41,6 +41,7 @@ CONFIG_FILE_PATH = (Path(__file__).parent / "config" / "config.json").resolve()
 COLORS = {
     "light": {
         "primary": "#2DD4BF",
+        "primary disabled": "#a9efe7",
         "text": "#0F4C75",
         "bg": "#F8F9FA",
         "card": "#FFFFFF",
@@ -50,6 +51,7 @@ COLORS = {
     },
     "dark": {
         "primary": "#2DD4BF",  # Keep teal as accent in dark mode
+        "primary disabled": "#a9efe7",
         "text": "#E9ECEF",
         "bg": "#121212",
         "card": "#1E1E1E",
@@ -90,7 +92,7 @@ class AccountingAssistantUI(QMainWindow):
         # Add toggle button to a persistent area (e.g., status bar)
         self.theme_toggle = QPushButton("🌙 Dark Mode")
         self.theme_toggle.setCheckable(True)
-        self.theme_toggle.setFixedSize(120, 40)
+        self.theme_toggle.setFixedSize(145, 40)
         self.theme_toggle.clicked.connect(self.toggle_theme)
         
         # Add to status bar (or your app's header/navigation)
@@ -122,7 +124,6 @@ class AccountingAssistantUI(QMainWindow):
 
     def update_theme(self):
         """Update all styles based on current theme"""
-        print("I was pressed!")
         colors = COLORS[self.current_theme]
         
         stylesheet = f"""
@@ -139,6 +140,9 @@ class AccountingAssistantUI(QMainWindow):
                 padding: 10px 20px;
                 font-weight: bold;
                 border: none;
+            }}
+            QPushButton:disabled {{
+                background-color: {colors['primary disabled']};
             }}
             
             QPushButton:hover {{
