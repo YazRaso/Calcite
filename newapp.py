@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QMessageBox,
     QFormLayout,
+    QProgressBar
 )
 
 
@@ -56,21 +57,25 @@ class AccountingAssistantUI(QMainWindow):
         self.create_file_selection_page()
         self.create_main_interaction_page()
         self.load_or_initialize_config()
+        self.stacked_widget.addWidget(self.loading_page)
         self.stacked_widget.setCurrentWidget(self.loading_page)
 
     def create_loading_screen(self):
         self.loading_page = QWidget()
         layout = QVBoxLayout(self.loading_page)
-        self.loading_label = QLabel("Loading...")
-        self.loading_label.setAlignment(Qt.AlignCenter)
-        self.loading_gif = QLabel()
-        self.loading_gif.setAlignment(Qt.AlignCenter)
-        movie = QMovie("assets/loading.gif")
-        self.loading_gif.setMovie(movie)
-        movie.start()
-        layout.addWidget(self.loading_label)
-        layout.addWidget(self.loading_gif)
-        self.stacked_widget.addWidget(self.loading_page)
+
+        label = QLabel("Loading Calcite...")
+        label.setAlignment(Qt.AlignCenter)
+        label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 20, QFont.Bold))
+
+        progress = QProgressBar()
+        progress.setRange(0, 0)  # Indeterminate
+        progress.setFixedHeight(30)
+
+        layout.addStretch()
+        layout.addWidget(label)
+        layout.addWidget(progress)
+        layout.addStretch()
 
     def create_landing_page(self):
         self.landing_page = QWidget()
@@ -196,6 +201,39 @@ class AccountingAssistantUI(QMainWindow):
     def go_to_file_selection_page(self):
         self.stacked_widget.setCurrentWidget(self.file_selection_page)
 
+    def go_to_main_interaction_page(self):
+        self.stacked_widget.setCurrentWidget(self.main_interaction_page)
+
+    def on_select_file_button_clicked(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setWindowTitle("Select Spreadsheet")
+        file_dialog.setNameFilter("Excel Files (*.xlsx *.xls *xlsm)")
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        documents_path = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)[0]
+        file_dialog.setDirectory(documents_path)
+
+        if file_dialog.exec():
+            selected_files = file_dialog.selectedFiles()
+            if selected_files:
+                self.file_name = selected_files[0]
+                self.selected_file_label.setText(f"Selected file: {self.file_name}")
+                self.next_button.setEnabled(True)
+            else:
+                self.selected_file_label.setText("Please select a file to get started")
+                self.next_button.setEnabled(False)
+
+    def on_submit_button_clicked(self):
+        pass
+
+    def on_generate_receipt_button_clicked(self):
+        pass
+
+    def on_past_receipts_button_clicked(self):
+        pass
+
+    def load_or_initialize_config(self):
+        pass
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -209,6 +247,6 @@ if __name__ == "__main__":
             QFontDatabase.addApplicationFont(font_path)
     # Create and show the main window
     window = AccountingAssistantUI()
-    window.show()
+    window.showFullScreen()
     # Start the event loop
     sys.exit(app.exec())
