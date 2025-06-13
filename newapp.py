@@ -342,6 +342,7 @@ class AccountingAssistantUI(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.landing_page)
     
     def go_to_file_selection_page(self):
+        self.file_path = None
         self.stacked_widget.setCurrentWidget(self.file_selection_page)
 
     def go_to_main_interaction_page(self):
@@ -373,11 +374,34 @@ class AccountingAssistantUI(QMainWindow):
             else:
                 self.selected_file_label.setText("Please select a file to get started")
 
-    def submit_AI_request(self):
-        self.prompt
+    def submit_AI_request(self) -> None:
+        prompt = self.prompt_input.text().strip()
+        if prompt:
+            # Append file path to request
+            prompt += f" EXCEL_FILE_PATH{self.file_path}"
+            # Attempt to get hold of server
+            try:
+                response = requests.post(url=CORE_SERVER_URL,
+                                         json={"sender": "user1",
+                                               "message": prompt})
+                # Check if response was accepted
+                if response.status_code == requests.codes.ok:
+                    self.output_text.append(f"User: {prompt}")
+                    messages = response.json()
+                    for msg in messages:
+                        if 'text' in msg:
+                            self.output_text.append(f"Calcite: {msg['text']}")
+            # Give warnings incase of exception
+            except Exception as e:
+                QMessageBox.warning(self, "Error", "The server was unable to accept your request, no changes made")
+            finally:
+                # Prepare for next message
+                self.prompt_input.clear()
 
     def on_generate_receipt_button_clicked(self):
-        pass
+        receipt_client = ExcelManager()
+        receipt_name = receipt_client.generate_receipt()
+        self.output_text.apppend(f"Calcite: Receipt for latest transaction added at {receipt_name}") 
 
     def on_past_receipts_button_clicked(self):
         pass

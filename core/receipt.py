@@ -80,9 +80,10 @@ def generate_receipt(
                 print(f"Warning: Could not process signature image: {e}")
 
         # Save the imag
-        name = f"{received_by} {reference_id}.png"
-        output_path = (Path(__file__).parent.parent / "receipts").resolve() / name 
+        receipt_name = f"{received_by} {reference_id}.png"
+        output_path = (Path(__file__).parent.parent / "receipts").resolve() / receipt_name 
         img.save(output_path)
+        return receipt_name
 
     except FileNotFoundError:
         print(f"Error: Template file not found at {receipt_template_path}.")
