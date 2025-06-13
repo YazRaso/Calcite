@@ -67,7 +67,7 @@ class AccountingAssistantUI(QMainWindow):
         super().__init__()
         self.setWindowTitle("Calcite - No Code Accounting")
         self.setGeometry(100, 100, 850, 700)
-        self.file_name = None
+        self.file_path = None
         self.current_theme = "light"
         self.config = {}
         self.selected_signature_path = ""
@@ -105,12 +105,10 @@ class AccountingAssistantUI(QMainWindow):
         server.start_server()
         # Check if the servers are up
         # TODO: Remove short circuit true once done testing
-       # if False and (server.check_server_health(
-        #            ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
-         #           CORE_SERVER_HEALTH_URL)):
-          #     self.stacked_widget.setCurrentWidget(self.landing_page)
-        if False:
-            self.stacked_widget.setCurrentWidget(self.error_page)
+        if True and (server.check_server_health(
+                    ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
+                    CORE_SERVER_HEALTH_URL)):
+             self.stacked_widget.setCurrentWidget(self.landing_page)
         else:
             self.stacked_widget.setCurrentWidget(self.error_page)
 
@@ -291,10 +289,12 @@ class AccountingAssistantUI(QMainWindow):
         prompt_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         self.prompt_input = QLineEdit()
         self.prompt_input.setPlaceholderText("Add a transaction of 30 AED, reference 200, for today at rate of 2.7")
+        self.prompt_input.setMinimumHeight(42)
+        self.prompt_input.returnPressed.connect(self.submit_AI_request)
 
         submit_button = QPushButton("Send")
         submit_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-        submit_button.clicked.connect(self.on_submit_button_clicked)
+        submit_button.clicked.connect(self.submit_AI_request)
 
         input_layout.addWidget(prompt_label, 0, 0)
         input_layout.addWidget(self.prompt_input, 0, 1)
@@ -352,22 +352,29 @@ class AccountingAssistantUI(QMainWindow):
         file_dialog.setWindowTitle("Select Spreadsheet")
         file_dialog.setNameFilter("Excel Files (*.xlsx *.xls *xlsm)")
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        documents_path = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)[0]
-        file_dialog.setDirectory(documents_path)
+        sheet_data_path = Path(__file__).parent / "sheet_data"
+        file_dialog.setDirectory(str(sheet_data_path))
 
         if file_dialog.exec():
             selected_files = file_dialog.selectedFiles()
             if selected_files:
-                # Get the short name of the excel file
-                self.file_name = selected_files[0]
-                display_file_name = selected_files[0].split('/')[-1]
-                self.selected_file_label.setText(f"Selected file: {display_file_name}")
+                # Get the file from the dialoge
+                self.file_path = selected_files[0]
+                self.file_path = Path(self.file_path).resolve()
+                # Check if file is a child of sheet data
+                try:
+                    self.file_path = self.file_path.relative_to(sheet_data_path)
+                except ValueError:
+                    QMessageBox.warning(self, "Invalid Selection", "You must select a file inside the 'sheet_data' folder.")
+                    return
+                # Display file path name
+                self.selected_file_label.setText(f"Selected file: {self.file_path}")
                 self.next_button.setEnabled(True)
             else:
                 self.selected_file_label.setText("Please select a file to get started")
 
-    def on_submit_button_clicked(self):
-        pass
+    def submit_AI_request(self):
+        self.prompt
 
     def on_generate_receipt_button_clicked(self):
         pass
