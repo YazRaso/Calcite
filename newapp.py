@@ -83,7 +83,7 @@ class AccountingAssistantUI(QMainWindow):
         self.create_landing_page()
         self.create_file_selection_page()
         self.create_main_interaction_page()
-        self.load_or_initialize_config()
+        self.create_setup_page()
         self.stacked_widget.addWidget(self.loading_page)
         self.initialize_system()
 
@@ -98,19 +98,25 @@ class AccountingAssistantUI(QMainWindow):
         # Add to status bar (or your app's header/navigation)
         self.statusBar().addPermanentWidget(self.theme_toggle)
 
+    def on_server_response(self):
+        if True or (server.check_server_health(
+                    ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
+                    CORE_SERVER_HEALTH_URL)):
+            self.stacked_widget.setCurrentWidget(self.landing_page)
+        else:
+            self.stacked_widget.setCurrentWidget(self.error_page)
+
     def initialize_system(self):
-        # Show loading screenn
+        # Show loading screen
         self.stacked_widget.setCurrentWidget(self.loading_page)
         # Boot up servers
         server.start_server()
-        # Check if the servers are up
-        # TODO: Remove short circuit true once done testing
-        if True and (server.check_server_health(
-                    ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
-                    CORE_SERVER_HEALTH_URL)):
-             self.stacked_widget.setCurrentWidget(self.landing_page)
-        else:
-            self.stacked_widget.setCurrentWidget(self.error_page)
+        with open(CONFIG_FILE_PATH, "r") as f:
+            config = json.load(f)
+            if config['user']['firstTime']:
+                self.stacked_widget.setCurrentWidget(self.setup_page)
+            else:
+                self.on_server_response()
 
     @Slot()
     def toggle_theme(self):
@@ -125,14 +131,12 @@ class AccountingAssistantUI(QMainWindow):
     def update_theme(self):
         """Update all styles based on current theme"""
         colors = COLORS[self.current_theme]
-        
         stylesheet = f"""
             QWidget {{
                 background-color: {colors['bg']};
                 color: {colors['text']};
                 font-family: "{FUTURISTIC_FONT_FAMILY}";
             }}
-            
             QPushButton {{
                 background-color: {colors['primary']};
                 color: white;
@@ -144,29 +148,24 @@ class AccountingAssistantUI(QMainWindow):
             QPushButton:disabled {{
                 background-color: {colors['primary disabled']};
             }}
-            
             QPushButton:hover {{
                 background-color: #25B9A6;
             }}
-            
             QPushButton.secondary {{
                 background-color: {colors['text']};
             }}
-            
             QPushButton.success {{
                 background-color: {colors['success']};
             }}
-            
             QFrame.data-card, QWidget.dashboard-widget {{
                 background-color: {colors['card']};
                 border: 1px solid {colors['border']};
                 border-radius: 12px;
             }}
-            
             QLabel.header {{
                 font-size: 18px;
                 font-weight: bold;
-                color: {colors['primary']};
+                color: {colors['bg']};
             }}
         """
         
@@ -404,10 +403,88 @@ class AccountingAssistantUI(QMainWindow):
         self.output_text.apppend(f"Calcite: Receipt for latest transaction added at {receipt_name}") 
 
     def on_past_receipts_button_clicked(self):
-        pass
+        receipts_path = (Path(__file__).parent / "receipts").resolve()
 
-    def load_or_initialize_config(self):
-        pass
+        if platform.system() == "Windows":
+            os.startfile(receipts_path)
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", str(receipts_path)])
+        else:
+            subprocess.Popen(["xdg-open", str(receipts_path)])
+
+    def create_setup_page(self):
+        self.setup_page = QWidget()
+        layout = QVBoxLayout(self.setup_page)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setContentsMargins(70, 50, 70, 50)
+        layout.setSpacing(30)
+
+        title_label = QLabel("First time setup")
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        layout.addWidget(title_label)
+
+        subtitle_label = QLabel("Connect. Configure. Done.")
+        subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        layout.addWidget(subtitle_label)
+
+        setup_group = QGroupBox("Tailor your experience")
+        setup_group_layout = QFormLayout(setup_group)
+
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Enter your full name — used for receipts")
+        
+        name_label = QLabel("Full Name:")
+        setup_group_layout.addRow(name_label, self.name_input)
+
+        signature_field_layout = QHBoxLayout()
+        self.select_signature_button = QPushButton("Select signature...")
+        self.select_signature_button.clicked.connect(self.select_signature_file)
+        signature_field_layout.addWidget(self.select_signature_button)
+
+        self.signature_path_label = QLabel("No signature image selected.")
+        sig_label = QLabel("Signature Image:")
+        setup_group_layout.addRow(sig_label, signature_field_layout)
+
+        layout.addWidget(setup_group)
+
+        self.save_setup_button = QPushButton("Save and continue")
+        self.save_setup_button.clicked.connect(self.save_first_time_setup)
+
+        layout.addWidget(self.save_setup_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.stacked_widget.addWidget(self.setup_page)
+
+    def select_signature_file(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setWindowTitle("Select Signature File")
+        file_dialog.setNameFilter("JPEG and PNG only (*.jpg *.png)")
+        self.selected_signature_path, _ = file_dialog.getOpenFileName()
+
+    def save_first_time_setup(self):
+        user_name = self.name_input.text().strip()
+
+        if not user_name:
+            self.show_message_dialog("Input Required", "Please enter your full name.", "warning")
+            return
+        if not self.selected_signature_path:
+            self.show_message_dialog("Input Required", "Please select a signature image.", "warning")
+            return
+
+        self.config["user"]["name"] = user_name
+        self.config["user"]["signaturePath"] = self.selected_signature_path
+        self.config["user"]["firstTime"] = False
+
+        try:
+            with open(CONFIG_FILE_PATH, 'w') as f:
+                json.dump(self.config, f, indent=2)
+
+        except Exception as e:
+            QMessageBox.warning(self, "Save Failed", "Unable to save configuration")
+
+        else:
+            # Check server
+           self.on_server_response() 
 
 
 if __name__ == "__main__":

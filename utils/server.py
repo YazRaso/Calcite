@@ -24,7 +24,6 @@ def start_server() -> None:
         # if first time build the docker image
         subprocess.Popen(["docker", "compose", "build", "--no-cache"],
                          cwd=docker_dir.resolve())
-        data["user"]["firstTime"] = False
     subprocess.Popen(["docker", "compose", "up"], cwd=docker_dir.resolve())
 
 
