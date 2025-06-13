@@ -69,7 +69,6 @@ class AccountingAssistantUI(QMainWindow):
         self.setGeometry(100, 100, 850, 700)
         self.file_path = None
         self.current_theme = "light"
-        self.config = {}
         self.selected_signature_path = ""
         # self.apply_global_styles()
 
@@ -165,7 +164,8 @@ class AccountingAssistantUI(QMainWindow):
             QLabel.header {{
                 font-size: 18px;
                 font-weight: bold;
-                color: {colors['bg']};
+                color: {colors['primary']};
+                background-color: transparent;
             }}
         """
         
@@ -463,18 +463,16 @@ class AccountingAssistantUI(QMainWindow):
 
     def save_first_time_setup(self):
         user_name = self.name_input.text().strip()
-
         if not user_name:
-            self.show_message_dialog("Input Required", "Please enter your full name.", "warning")
+            QMessageBox.warning(self, "Input Required", "Please enter your full name.")
             return
         if not self.selected_signature_path:
-            self.show_message_dialog("Input Required", "Please select a signature image.", "warning")
+            QMessageBox.warning(self, "Input Required", "Please select a signature image.")
             return
 
         self.config["user"]["name"] = user_name
         self.config["user"]["signaturePath"] = self.selected_signature_path
         self.config["user"]["firstTime"] = False
-
         try:
             with open(CONFIG_FILE_PATH, 'w') as f:
                 json.dump(self.config, f, indent=2)
