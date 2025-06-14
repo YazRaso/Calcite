@@ -7,7 +7,7 @@ import platform
 import subprocess
 from core.books import ExcelManager
 from utils import server
-from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, QTimer
+from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, Slot, QTimer
 from PySide6.QtGui import QFont, QMovie, QFontDatabase
 from PySide6.QtWidgets import (
     QApplication,
@@ -27,6 +27,8 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QMessageBox,
     QFormLayout,
+    QProgressBar,
+    QInputDialog
 )
 
 FUTURISTIC_FONT_FAMILY = "JetBrains Mono"
@@ -36,688 +38,460 @@ CORE_SERVER_HEALTH_URL = "http://localhost:5005/status"
 ACTIONS_SERVER_HEALTH_URL = "http://localhost:5055/health"
 CONFIG_FILE_PATH = (Path(__file__).parent / "config" / "config.json").resolve()
 
+# Styles
+COLORS = {
+    "light": {
+        "primary": "#2DD4BF",
+        "primary disabled": "#a9efe7",
+        "text": "#0F4C75",
+        "bg": "#F8F9FA",
+        "card": "#FFFFFF",
+        "border": "#E9ECEF",
+        "success": "#4AD66D",
+        "warning": "#FF9F1C"
+    },
+    "dark": {
+        "primary": "#2DD4BF",  # Keep teal as accent in dark mode
+        "primary disabled": "#a9efe7",
+        "text": "#E9ECEF",
+        "bg": "#121212",
+        "card": "#1E1E1E",
+        "border": "#2D2D2D",
+        "success": "#4AD66D",
+        "warning": "#FF9F1C"
+    }
+}
+
 
 class AccountingAssistantUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Calcite - No Code Accounting")
         self.setGeometry(100, 100, 850, 700)
-        self.file_name = None
-        self.config = {}
+        self.file_path = None
+        self.file_abs_path = None
+        self.current_theme = "light"
         self.selected_signature_path = ""
-        self.apply_global_styles()
+        # self.apply_global_styles()
 
+        self.setup_theme_system()
+        self.toggle_theme()
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
 
         self.create_loading_screen()
+        self.create_error_page()
         self.create_landing_page()
         self.create_file_selection_page()
         self.create_main_interaction_page()
-        # Determine initial page and setup based on firstTime status
-        if self.config.get("user", {}).get("firstTime", True):
-            self.create_first_time_setup_page()
-            self.stacked_widget.setCurrentWidget(self.first_time_setup_page)
-            # Server startup and health check will be initiated after setup completion.
+        self.create_setup_page()
+        self.initialize_system()
+
+    def setup_theme_system(self):
+        """Initialize theme toggle and signal connections"""
+        # Add toggle button to a persistent area (e.g., status bar)
+        self.theme_toggle = QPushButton("🌙 Dark Mode")
+        self.theme_toggle.setCheckable(True)
+        self.theme_toggle.setFixedSize(145, 40)
+        self.theme_toggle.clicked.connect(self.toggle_theme)
+        
+        # Add to status bar (or your app's header/navigation)
+        self.statusBar().addPermanentWidget(self.theme_toggle)
+
+    async def on_server_response(self):
+        if (await server.check_server_health(ACTIONS_SERVER_HEALTH_URL)
+           and await server.check_server_health(
+                    CORE_SERVER_HEALTH_URL)):
+            self.stacked_widget.setCurrentWidget(self.landing_page)
         else:
-            self.stacked_widget.setCurrentWidget(self.loading_page)
-            if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
-                self.loading_movie.start()
+            self.stacked_widget.setCurrentWidget(self.error_page)
 
-    def load_or_initialize_config(self):
-        default_config = {
-            "user": {
-                "firstTime": True,
-                "name": "",
-                "signaturePath": ""
-            }
-        }
-        try:
-            if os.path.exists(CONFIG_FILE_PATH):
-                with open(CONFIG_FILE_PATH, 'r') as f:
-                    self.config = json.load(f)
-                # Basic validation
-                if not isinstance(self.config.get("user"), dict) or \
-                        not isinstance(self.config.get("user", {}).get("firstTime"), bool):
-                    print("Config file 'user' section is malformed. Resetting to default.")
-                    self.config = default_config
-                    self.save_config_to_file()
-            else:
-                print("Config file not found. Creating default config.")
-                self.config = default_config
-                self.save_config_to_file()
-        except json.JSONDecodeError:
-            print(f"Error decoding {CONFIG_FILE_PATH}. Resetting to default.")
-            self.config = default_config
-            self.save_config_to_file()
-        except Exception as e:
-            print(f"An unexpected error occurred while loading config: {e}. Using default.")
-            self.config = default_config
-            # self.save_config_to_file() # Optionally save default if a generic error occurs
-
-    def apply_global_styles(self):
-        self.setStyleSheet(f"""
-        QMainWindow {{
-            background-color: #0b0c10;
-        }}
-        QWidget {{
-            font-size: 14px;
-            color: #e0e0e0;
-            font-family: "{FUTURISTIC_FONT_FAMILY}", monospace;
-        }}
-        QLabel {{
-            font-size: 15px;
-            color: #e0e0e0;
-            font-family: "{FUTURISTIC_FONT_FAMILY}";
-        }}
-        QPushButton {{
-            background-color: #00bcd4;
-            color: #0b0c10;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 2px;
-            font-size: 14px;
-            font-family: "{FUTURISTIC_FONT_FAMILY}";
-            font-weight: 500;
-        }}
-        QPushButton:hover {{
-            background-color: #00acc1;
-        }}
-        QPushButton:pressed {{
-            background-color: #0097a7;
-        }}
-        QPushButton:disabled {{
-            background-color: #37474f;
-            color: #78909c;
-            border: 1px solid #546e7a;
-        }}
-        QLineEdit, QTextEdit {{
-            background-color: #1c1f26;
-            border: 1px solid #00bcd4;
-            border-radius: 2px;
-            padding: 10px;
-            font-size: 14px;
-            color: #e0e0e0;
-            font-family: "{FUTURISTIC_FONT_FAMILY}";
-        }}
-        QLineEdit:focus, QTextEdit:focus {{
-            border-color: #00e5ff;
-        }}
-        QGroupBox {{
-            font-size: 17px;
-            font-weight: bold;
-            color: #00e5ff;
-            border: 1px solid #2e3b4e;
-            border-radius: 4px;
-            margin-top: 15px;
-            padding: 25px 20px 20px 20px;
-            background-color: #121318;
-            font-family: "{FUTURISTIC_FONT_FAMILY}";
-        }}
-        QGroupBox::title {{
-            subcontrol-origin: margin;
-            subcontrol-position: top left;
-            padding: 0 10px 8px 10px;
-            left: 15px;
-            color: #00e5ff;
-            font-family: "{FUTURISTIC_FONT_FAMILY}";
-        }}
-        QPushButton.secondary {{
-            background-color: #455a64;
-            color: #e0e0e0;
-        }}
-        QPushButton.secondary:hover {{
-            background-color: #37474f;
-        }}
-        QPushButton.secondary:pressed {{
-            background-color: #263238;
-        }}
-        QPushButton.success {{
-            background-color: #00e676;
-            color: #0b0c10;
-        }}
-        QPushButton.success:hover {{
-            background-color: #00c853;
-        }}
-        QPushButton.success:pressed {{
-            background-color: #00bfa5;
-        }}
-        QPushButton.info {{
-            background-color: #00acc1;
-            color: #0b0c10;
-        }}
-        QPushButton.info:hover {{
-            background-color: #00838f;
-        }}
-        QPushButton.info:pressed {{
-            background-color: #006064;
-        }}
-      """)
-
-    def save_config_to_file(self):
-        try:
-            with open(CONFIG_FILE_PATH, 'w') as f:
-                json.dump(self.config, f, indent=2)
-            print(f"Config saved to {CONFIG_FILE_PATH}")
-        except Exception as e:
-            print(f"Error saving config to {CONFIG_FILE_PATH}: {e}")
-
-    def create_first_time_setup_page(self):
-        self.first_time_setup_page = QWidget()
-        layout = QVBoxLayout(self.first_time_setup_page)
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.setContentsMargins(70, 50, 70, 50)  # Adjusted margins
-        layout.setSpacing(30)
-
-        title_label = QLabel("Welcome to Calcite!")
-        title_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 28, QFont.Weight.Bold))
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_label.setStyleSheet(f"color: #00e5ff; padding-bottom: 10px; font-family: '{FUTURISTIC_FONT_FAMILY}';")
-        layout.addWidget(title_label)
-
-        subtitle_label = QLabel("Let's get you set up for a seamless experience.")
-        subtitle_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16, QFont.Weight.Normal))
-        subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        subtitle_label.setStyleSheet(f"color: #a0a0c0; padding-bottom: 25px; font-family: '{FUTURISTIC_FONT_FAMILY}';")
-        layout.addWidget(subtitle_label)
-
-        setup_group = QGroupBox("Your Information")
-        setup_group_layout = QFormLayout(setup_group)  # QFormLayout is good for label-field pairs
-        setup_group_layout.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapAllRows)  # Handles smaller screens better
-        setup_group_layout.setSpacing(20)
-        setup_group_layout.setContentsMargins(25, 35, 25, 25)  # Padding inside groupbox
-
-        self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Enter your full name")
-        self.name_input.setMinimumHeight(40)
-        name_label = QLabel("Full Name:")
-        name_label.setStyleSheet("padding-top: 5px;")  # Align better with QLineEdit height
-        setup_group_layout.addRow(name_label, self.name_input)
-
-        signature_field_layout = QHBoxLayout()
-        self.select_signature_button = QPushButton("Browse File...")
-        self.select_signature_button.setFixedWidth(150)
-        self.select_signature_button.clicked.connect(self.select_signature_file)
-        signature_field_layout.addWidget(self.select_signature_button)
-
-        self.signature_path_label = QLabel("No signature image selected.")
-        self.signature_path_label.setStyleSheet("color: #888899; font-style: italic; margin-left: 10px;")
-        signature_field_layout.addWidget(self.signature_path_label)
-        signature_field_layout.addStretch()
-
-        sig_label = QLabel("Signature Image:")
-        sig_label.setStyleSheet("padding-top: 5px;")
-        setup_group_layout.addRow(sig_label, signature_field_layout)
-
-        layout.addWidget(setup_group)
-        layout.addSpacerItem(QSpacerItem(20, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
-
-        self.save_setup_button = QPushButton("Save and Continue")
-        self.save_setup_button.setMinimumHeight(50)
-        self.save_setup_button.setFixedWidth(250)
-        self.save_setup_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16, QFont.Weight.Bold))
-        self.save_setup_button.setProperty("class", "success")  # Use success styling
-        self.save_setup_button.clicked.connect(self.save_first_time_setup)
-        layout.addWidget(self.save_setup_button, alignment=Qt.AlignmentFlag.AlignCenter)
-
-        layout.addStretch()  # Pushes content upwards if there's extra space
-
-        self.stacked_widget.addWidget(self.first_time_setup_page)
-
-    def select_signature_file(self):
-        file_dialog = QFileDialog(self)
-        file_path, _ = file_dialog.getOpenFileName(
-            self,
-            "Select Signature Image",
-            self.selected_signature_path or os.path.expanduser("~"),  # Start in user's home or last path
-            "Image Files (*.png *.jpg *.jpeg *.bmp);;All Files (*)"
-        )
-        if file_path:
-            self.selected_signature_path = file_path
-            file_name = os.path.basename(file_path)
-            self.signature_path_label.setText(file_name)
-            self.signature_path_label.setStyleSheet("color: #e0e0e0; margin-left: 10px;")  # Reset style to normal color
-            print(f"Signature file selected: {file_path}")
-    # FLAG 1
-    def save_first_time_setup(self):
-        user_name = self.name_input.text().strip()
-
-        if not user_name:
-            self.show_message_dialog("Input Required", "Please enter your full name.", "warning")
-            return
-        if not self.selected_signature_path:
-            self.show_message_dialog("Input Required", "Please select a signature image.", "warning")
-            return
-
-        self.config["user"]["name"] = user_name
-        self.config["user"]["signaturePath"] = self.selected_signature_path
-        self.config["user"]["firstTime"] = False
-        self.save_config_to_file()
-
-        print("First-time setup complete. User data saved.")
-
-        # Now, transition to the loading screen and start server health checks
+    def initialize_system(self):
+        # Show loading screen
         self.stacked_widget.setCurrentWidget(self.loading_page)
-        if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
-            self.loading_movie.start()
+        # Boot up servers
+        server.start_server()
+        with open(CONFIG_FILE_PATH, "r") as f:
+            config = json.load(f)
+            if config['user']['firstTime']:
+                self.stacked_widget.setCurrentWidget(self.setup_page)
+            else:
+                self.go_to_loading_page()
 
-        # Initialize and start health check process
-        if not hasattr(self, 'health_check_timer'):
-            self.health_check_timer = QTimer(self)
-            self.health_check_timer.setInterval(500)
-            self.health_check_timer.timeout.connect(self.check_server_status_and_proceed)
+    @Slot()
+    def toggle_theme(self):
+        """Toggle between light and dark themes"""
+        self.current_theme = "dark" if self.current_theme == "light" else "light"
+        self.update_theme()
+        
+        # Update button text
+        icon = "☀️" if self.current_theme == "light" else "🌙"
+        self.theme_toggle.setText(f"{icon} {'Dark' if self.current_theme == 'dark' else 'Light'} Mode")
 
-        self.health_check_timer.start()
-        self.check_server_status_and_proceed()
-
-    def show_message_dialog(self, title, message, icon_type="information"):
-        msg_box = QMessageBox(self)
-        msg_box.setWindowTitle(title)
-        msg_box.setText(message)
-        msg_box.setStyleSheet(f"""
-            QMessageBox {{
-                background-color: #1c1f26;
+    def update_theme(self):
+        """Update all styles based on current theme"""
+        colors = COLORS[self.current_theme]
+        stylesheet = f"""
+            QWidget {{
+                background-color: {colors['bg']};
+                color: {colors['text']};
                 font-family: "{FUTURISTIC_FONT_FAMILY}";
             }}
-            QLabel {{ /* For the message text */
-                color: #e0e0e0;
-                font-size: 14px;
-                font-family: "{FUTURISTIC_FONT_FAMILY}";
+            QPushButton {{
+                background-color: {colors['primary']};
+                color: white;
+                border-radius: 8px;
+                padding: 10px 20px;
+                font-weight: bold;
+                border: none;
             }}
-            QPushButton {{ /* Standard button styling from global styles */
-                background-color: #00bcd4; color: #0b0c10; border: none;
-                padding: 8px 16px; border-radius: 2px; font-size: 14px;
-                font-family: "{FUTURISTIC_FONT_FAMILY}"; font-weight: 500;
+            QPushButton:disabled {{
+                background-color: {colors['primary disabled']};
             }}
-            QPushButton:hover {{ background-color: #00acc1; }}
-            QPushButton:pressed {{ background-color: #0097a7; }}
+            QPushButton:hover {{
+                background-color: #25B9A6;
+            }}
+            QPushButton.secondary {{
+                background-color: {colors['text']};
+            }}
+            QPushButton.success {{
+                background-color: {colors['success']};
+            }}
+            QFrame.data-card, QWidget.dashboard-widget {{
+                background-color: {colors['card']};
+                border: 1px solid {colors['border']};
+                border-radius: 12px;
+            }}
+            QLabel.header {{
+                font-size: 18px;
+                font-weight: bold;
+                color: {colors['primary']};
+            }}
+            QGroupBox {{
+                border: 1px solid {colors['primary']};
+                padding: 2px
+            }}
+        """
+        
+        self.setStyleSheet(stylesheet)
+        
+        # Update toggle button style to stand out
+        self.theme_toggle.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {colors['card']};
+                color: {colors['text']};
+                border: 1px solid {colors['border']};
+            }}
         """)
-        if icon_type == "warning":
-            msg_box.setIcon(QMessageBox.Icon.Warning)
-        elif icon_type == "error":
-            msg_box.setIcon(QMessageBox.Icon.Critical)
-        else:  # "information"
-            msg_box.setIcon(QMessageBox.Icon.Information)
-        msg_box.exec()
 
     def create_loading_screen(self):
         self.loading_page = QWidget()
         layout = QVBoxLayout(self.loading_page)
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.setContentsMargins(50, 50, 50, 50)  # Added margins
-        layout.setSpacing(30)  # Added spacing
+        layout.addStretch()
 
-        loading_text_label = QLabel("Initializing Calcite Systems...\nPlease Wait.")
-        loading_text_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 24, QFont.Weight.Bold))
-        loading_text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        loading_text_label.setStyleSheet(f"""
-            color: #00e5ff;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-        layout.addWidget(loading_text_label)
+        with open(CONFIG_FILE_PATH, 'r') as f:
+            data = json.load(f)
+            name = data['user']['name']
+            first_time = data['user']['firstTime']
 
-        # Optional: Animated GIF for loading
-        # IMPORTANT: You need to provide a 'loading.gif' file in the same directory
-        # as your script, or provide the correct path to your GIF.
-        self.movie_label = QLabel(self)  # Parent it to self for QMovie to work reliably in some Qt bindings
-        self.loading_movie = None  # Initialize to None
-        try:
-            # Replace "loading.gif" with the path to your actual loading animation
-            movie = QMovie("assets/loading.gif")  # Ensure this file exists!
-            if movie.isValid():
-                self.loading_movie = movie
-                self.loading_movie.setScaledSize(QSize(120, 120))  # Adjust size as needed
-                self.movie_label.setMovie(self.loading_movie)
-            else:
-                print("Warning: loading.gif is not valid or not found. Displaying static text.")
-                self.movie_label.setText("Loading animation...")  # Fallback text
-                self.movie_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-                self.movie_label.setStyleSheet("color: #a0a0c0;")
-        except Exception as e:
-            print(f"Error loading QMovie: {e}")
-            self.movie_label.setText("Loading animation error...")  # Fallback text
-            self.movie_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
-            self.movie_label.setStyleSheet("color: #a0a0c0;")
+        if not first_time:
+            name = QLabel(f"Welcome back {name.split()[0]}!")
+            name.setAlignment(Qt.AlignCenter)
+            name.setFont(QFont(FUTURISTIC_FONT_FAMILY, 28, QFont.Weight.Bold))
+            layout.addWidget(name)
 
-        self.movie_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.movie_label)
+        label = QLabel("Loading Calcite...")
+        label.setAlignment(Qt.AlignCenter)
 
+        progress = QProgressBar()
+        progress.setRange(0, 0)  # Indeterminate
+        progress.setFixedHeight(30)
+
+        layout.addWidget(label)
+        layout.addWidget(progress)
+        layout.addStretch()
         self.stacked_widget.addWidget(self.loading_page)
 
-    def check_server_status_and_proceed(self):
-        """
-        Checks the action server's health. If healthy, stops the timer
-        and transitions to the landing page. Otherwise, ensures loading
-        animation is running.
-        The original request: "the screen must keep being a loading screen while actions_server.check_health() -> bool"
-        This is interpreted as:
-        - If check_health() is TRUE (server is healthy), THEN WE ARE DONE LOADING.
-        - If check_health() is FALSE (server is NOT healthy), THEN WE KEEP LOADING.
-        """
-        # print(f"Checking server health... Status: {actions_server.check_health()}") # For debugging
-        # action_server_up, core_server_up = server.check_server_health(url=ACTIONS_SERVER_HEALTH_URL), server.check_server_health(url=CORE_SERVER_HEALTH_URL)
-        if True or (action_server_up and core_server_up):  # Server is healthy, proceed
-            # REMOVE THE True, it is only here for testing gui
-            self.health_check_timer.stop()
-            if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid():
-                self.loading_movie.stop()
-            self.stacked_widget.setCurrentWidget(self.landing_page)
-        else:  # Server not healthy yet, keep showing loading screen
-            # Ensure loading screen is visible and animation is (re)started if needed
-            if self.stacked_widget.currentWidget() != self.loading_page:
-                self.stacked_widget.setCurrentWidget(self.loading_page)
-            if hasattr(self, 'loading_movie') and self.loading_movie and self.loading_movie.isValid() and \
-                    self.loading_movie.state() != QMovie.MovieState.Running:
-                self.loading_movie.start()
+    def go_to_loading_page(self):
+        self.stacked_widget.setCurrentWidget(self.loading_page)
+        self.on_server_response()
+
+    def create_error_page(self):
+        self.error_page = QWidget()
+        layout = QVBoxLayout(self.error_page)
+
+        label = QLabel("⚠️ System failed to load server!")
+        label.setAlignment(Qt.AlignCenter)
+
+        retry_button = QPushButton("Retry")
+        retry_button.clicked.connect(self.initialize_system)
+
+        layout.addStretch()
+        layout.addWidget(label)
+        layout.addWidget(retry_button, alignment=Qt.AlignCenter)
+        layout.addStretch()
+        self.stacked_widget.addWidget(self.error_page)
 
     def create_landing_page(self):
         self.landing_page = QWidget()
         layout = QVBoxLayout(self.landing_page)
-        layout.setContentsMargins(70, 70, 70, 70)
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.setSpacing(40)
+        layout.setSpacing(5)
+        description_label = QLabel(
+            "Calcite AI: Your personal accountant — on your desktop, 24/7"
+        )
 
-        welcome_label = QLabel("Welcome to Calcite")
-        welcome_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 36, QFont.Bold))
-        welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        welcome_label.setStyleSheet(f"""
-            color: #00e5ff;
-            padding-bottom: 15px;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
+        description_label.setAlignment(Qt.AlignCenter)
+        description_label.setWordWrap(True)
+        layout.addWidget(description_label)
 
-        tagline_label = QLabel("Your Futuristic Accounting AI Agent")
-        tagline_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16, QFont.Normal))
-        tagline_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        tagline_label.setStyleSheet(f"""
-            color: #a0a0c0;
-            padding-bottom: 30px;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-
-        start_button = QPushButton("Start")
-        start_button.setMinimumHeight(60)
-        start_button.setFixedWidth(280)
-        start_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 18, QFont.Bold))
-        start_button.clicked.connect(self.go_to_file_selection)
-
-        layout.addWidget(welcome_label)
-        layout.addWidget(tagline_label)
-        layout.addSpacerItem(QSpacerItem(20, 60, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-        layout.addWidget(start_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addSpacerItem(QSpacerItem(20, 60, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-
+        start_button = QPushButton("Get Started")
+        start_button.setFixedSize(200, 75)
+        start_button.clicked.connect(self.go_to_file_selection_page)
+        layout.addWidget(start_button, alignment=Qt.AlignCenter)
         self.stacked_widget.addWidget(self.landing_page)
 
     def create_file_selection_page(self):
         self.file_selection_page = QWidget()
         layout = QVBoxLayout(self.file_selection_page)
         layout.setContentsMargins(50, 50, 50, 50)
-        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        layout.setSpacing(30)
-
-        title_label = QLabel("Load spreadsheet")
-        title_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 28, QFont.Bold))
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_label.setStyleSheet(f"""
-            color: #00e5ff;
-            margin-bottom: 30px;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-
-        select_file_button = QPushButton("Browse spreadsheets")
-        select_file_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 15, QFont.DemiBold))
-        select_file_button.setMinimumWidth(280)
-        select_file_button.clicked.connect(self.open_file_dialog)
-
-        self.selected_file_label = QLabel("No spreadsheet selected.")
-        self.selected_file_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.selected_file_label.setStyleSheet(f"""
-            font-style: italic;
-            color: #888899;
-            margin: 20px 0;
-            font-size: 15px;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-
-        self.proceed_button = QPushButton("Next")
-        self.proceed_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 15, QFont.DemiBold))
-        self.proceed_button.clicked.connect(self.go_to_main_interaction)
-        self.proceed_button.setEnabled(False)
-        self.proceed_button.setMinimumWidth(280)
-        self.proceed_button.setProperty("class", "success")
-
-        back_button = QPushButton("Back")
-        back_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 15, QFont.DemiBold))
-        back_button.clicked.connect(self.go_to_landing_page)
-        back_button.setMinimumWidth(280)
-        back_button.setProperty("class", "secondary")
-
+        layout.setAlignment(Qt.AlignCenter)
+        # Create title label
+        title_label = QLabel("Select spreadsheet")
+        title_label.setAlignment(Qt.AlignCenter)
+        # Create select button
+        select_button = QPushButton("Browse spreadsheets")
+        select_button.clicked.connect(self.on_select_file_button_clicked)
+        # Create label to show selected file
+        self.selected_file_label = QLabel("Please select a file to get started")
+        self.selected_file_label.setAlignment(Qt.AlignCenter)
+        # Create next button
+        self.next_button = QPushButton("Next")
+        self.next_button.setEnabled(False)
+        self.next_button.clicked.connect(self.go_to_main_interaction_page)
+        # Create back button
+        self.back_button = QPushButton("Back")
+        self.back_button.clicked.connect(self.go_to_landing_page)
+        # Layout created widgets
         layout.addWidget(title_label)
-        layout.addWidget(select_file_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.selected_file_label, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding))
-        layout.addWidget(self.proceed_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(back_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addStretch(1)
-
+        layout.addWidget(select_button)
+        layout.addWidget(self.selected_file_label)
+        layout.addWidget(self.next_button)
+        layout.addWidget(self.back_button)
         self.stacked_widget.addWidget(self.file_selection_page)
 
     def create_main_interaction_page(self):
         self.main_interaction_page = QWidget()
         main_layout = QVBoxLayout(self.main_interaction_page)
-        main_layout.setContentsMargins(30, 30, 30, 30)
+        main_layout.setContentsMargins(50, 50, 50, 50)
         main_layout.setSpacing(25)
 
         self.current_file_header_label = QLabel("Spreadsheet")
-        self.current_file_header_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 18, QFont.Bold))
-        self.current_file_header_label.setStyleSheet(f"""
-            color: #00e5ff;
-            margin-bottom: 15px;
-            padding: 5px;
-            border-bottom: 1px solid #2e3b4e;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-        main_layout.addWidget(self.current_file_header_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        main_layout.addWidget(self.current_file_header_label, alignment=Qt.AlignCenter)
 
-        input_group = QGroupBox("Chat")
+        input_group = QGroupBox("")
         input_layout = QGridLayout(input_group)
         input_layout.setSpacing(15)
 
-        command_prompt_label = QLabel("Prompt:")
-        command_prompt_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 15))
-        self.command_input = QLineEdit()
-        self.command_input.setPlaceholderText("Ready when you are...")
-        self.command_input.returnPressed.connect(self.submit_command)
-        self.command_input.setMinimumHeight(42)
+        prompt_label = QLabel("Prompt")
+        self.prompt_input = QLineEdit()
+        self.prompt_input.setPlaceholderText("Add a transaction of 30 AED, reference 200, for today at rate of 2.7")
+        self.prompt_input.setMinimumHeight(42)
+        self.prompt_input.returnPressed.connect(self.submit_AI_request)
 
         submit_button = QPushButton("Send")
-        submit_button.clicked.connect(self.submit_command)
-        submit_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14, QFont.Bold))
+        submit_button.clicked.connect(self.submit_AI_request)
 
-        input_layout.addWidget(command_prompt_label, 0, 0)
-        input_layout.addWidget(self.command_input, 0, 1, 1, 2)
-        input_layout.addWidget(submit_button, 1, 3, Qt.AlignmentFlag.AlignRight)
-        input_layout.setColumnStretch(1, 3)
-        input_layout.setColumnStretch(2, 1)
+        input_layout.addWidget(prompt_label, 0, 0)
+        input_layout.addWidget(self.prompt_input, 0, 1)
+        input_layout.addWidget(submit_button, 0, 2, Qt.AlignRight)
 
         main_layout.addWidget(input_group)
 
-        output_group = QGroupBox("Calcite AI")
+        output_group = QGroupBox("")
         output_layout = QVBoxLayout(output_group)
-        output_layout.setSpacing(10)
+        output_layout.setSpacing(15)
 
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
-        self.output_text.setPlaceholderText("Awaiting Orders")
-        self.output_text.setMinimumHeight(220)
-        self.output_text.setFont(QFont(FUTURISTIC_FONT_FAMILY, 13))
+        self.output_text.setPlaceholderText("Ready when you are - Calcite")
 
         output_layout.addWidget(self.output_text)
         main_layout.addWidget(output_group)
 
-        receipts_group = QGroupBox("Receipts")
+        receipts_group = QGroupBox("")
         receipts_layout = QHBoxLayout(receipts_group)
-        receipts_layout.setSpacing(20)
-        receipts_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        receipts_layout.setSpacing(15)
 
         self.generate_receipt_button = QPushButton("Generate Receipt")
-        self.generate_receipt_button.clicked.connect(self.generate_receipt)
-        self.generate_receipt_button.setProperty("class", "success")
-        self.generate_receipt_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14, QFont.Bold))
+        self.generate_receipt_button.clicked.connect(self.on_generate_receipt_button_clicked)
 
         self.past_receipts_button = QPushButton("Past Receipts")
-        self.past_receipts_button.clicked.connect(self.past_receipts)
-        self.past_receipts_button.setProperty("class", "info")
-        self.past_receipts_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14, QFont.Bold))
+        self.past_receipts_button.clicked.connect(self.on_past_receipts_button_clicked)
 
         receipts_layout.addWidget(self.generate_receipt_button)
         receipts_layout.addWidget(self.past_receipts_button)
 
         main_layout.addWidget(receipts_group)
-        main_layout.addStretch(1)
 
-        back_to_file_select_button = QPushButton("Back")
-        back_to_file_select_button.clicked.connect(self.go_to_file_selection_from_main)
-        back_to_file_select_button.setProperty("class", "secondary")
-        back_to_file_select_button.setMinimumWidth(300)
-        back_to_file_select_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14, QFont.Bold))
+        back_button = QPushButton("Back")
+        back_button.clicked.connect(self.go_to_file_selection_page)
 
-        main_layout.addWidget(back_to_file_select_button, alignment=Qt.AlignmentFlag.AlignCenter)
-
+        main_layout.addWidget(back_button, alignment=Qt.AlignCenter)
         self.stacked_widget.addWidget(self.main_interaction_page)
 
     def go_to_landing_page(self):
         self.stacked_widget.setCurrentWidget(self.landing_page)
-
-    def go_to_file_selection(self):
+    
+    def go_to_file_selection_page(self):
         self.stacked_widget.setCurrentWidget(self.file_selection_page)
 
-    def go_to_file_selection_from_main(self):
-        self.selected_file_path = ""
-        self.selected_file_label.setText("Please select a spreadsheet to get started.")
-        self.selected_file_label.setStyleSheet(f"""
-            font-style: italic; color: #888899; margin: 20px 0; font-size:15px;
-            font-family: '{FUTURISTIC_FONT_FAMILY}';
-        """)
-        self.proceed_button.setEnabled(False)
-        self.output_text.clear()
-        self.command_input.clear()
-        self.current_file_header_label.setText("Data Matrix: Standby")
-        self.stacked_widget.setCurrentWidget(self.file_selection_page)
+    def go_to_main_interaction_page(self):
+        self.stacked_widget.setCurrentWidget(self.main_interaction_page)
 
-    def go_to_main_interaction(self):
-        if self.selected_file_path:
-            filename = self.selected_file_path.split('/')[-1]
-            self.current_file_header_label.setText(f"Current Spreadsheet:{filename}")
-            self.output_text.append(f"Loaded your file: '{filename}', awaiting your next move - Calcite")
-            self.stacked_widget.setCurrentWidget(self.main_interaction_page)
-        else:
-            self.selected_file_label.setText("Warning: No spreadsheet selected.")
-            self.selected_file_label.setStyleSheet(f"""
-                color: #ff4d4d;
-                font-weight: bold; margin-top: 15px; font-size:15px;
-                font-family: '{FUTURISTIC_FONT_FAMILY}';
-            """)
-
-    def open_file_dialog(self):
+    def on_select_file_button_clicked(self):
         file_dialog = QFileDialog(self)
-        file_dialog.setStyleSheet(f"""
-            QFileDialog {{
-                background-color: #121318;
-                color: #e0e0e0;
-                font-family: '{FUTURISTIC_FONT_FAMILY}';
-            }}
-            QFileDialog QLabel, QFileDialog QTreeView, QFileDialog QListView,
-            QFileDialog QPushButton, QFileDialog QLineEdit {{
-                background-color: #1c1f26;
-                color: #e0e0e0;
-                font-family: '{FUTURISTIC_FONT_FAMILY}';
-            }}
-            QFileDialog QPushButton {{
-                 background-color: #00bcd4; color: #0b0c10; padding: 8px 15px; border-radius: 2px;
-            }}
-             QFileDialog QPushButton:hover {{ background-color: #00acc1; }}
-        """)
-        file_dialog.setWindowTitle("Select Data Matrix Source (Excel Workbook)")
-        file_dialog.setNameFilter("Excel Workbooks (*.xlsx *.xls)")
-        file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
+        file_dialog.setWindowTitle("Select Spreadsheet")
+        file_dialog.setNameFilter("Excel Files (*.xlsx *.xls *xlsm)")
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        documents_path = QStandardPaths.standardLocations(QStandardPaths.StandardLocation.DocumentsLocation)[0]
-        file_dialog.setDirectory(documents_path)
+        sheet_data_path = Path(__file__).parent / "sheet_data"
+        file_dialog.setDirectory(str(sheet_data_path))
 
         if file_dialog.exec():
-            filenames = file_dialog.selectedFiles()
-            self.selected_file_path = filenames[0]
-            # print(filenames)  returns list
-            # print(filenames[0])  returns file path as str
-            if filenames:
-                self.selected_file_path = filenames[0]
-                short_filename = self.selected_file_path.split('/')[-1]
-                if len(short_filename) > 45:
-                    short_filename = "..." + short_filename[-42:]
-                self.selected_file_label.setText(f"Selected spreadsheet: {short_filename}")
-                self.selected_file_label.setStyleSheet(f"""
-                    color: #00e676;
-                    font-weight: bold; margin: 20px 0; font-size:15px;
-                    font-family: '{FUTURISTIC_FONT_FAMILY}';
-                """)
-                self.proceed_button.setEnabled(True)
-                self.output_text.clear()
-                #todo
+            selected_files = file_dialog.selectedFiles()
+            if selected_files:
+                # Get the file from the dialoge
+                self.file_path = selected_files[0]
+                self.file_abs_path = self.file_path = Path(self.file_path).resolve()
+                # Check if file is a child of sheet data
+                try:
+                    self.file_path = self.file_path.relative_to(sheet_data_path)
+                except ValueError:
+                    QMessageBox.warning(self, "Invalid Selection", "You must select a file inside the 'sheet_data' folder.")
+                    return
+                # Display file path name
+                self.selected_file_label.setText(f"Selected file: {self.file_path}")
+                self.next_button.setEnabled(True)
             else:
-                self.selected_file_path = ""
-                self.selected_file_label.setText("No spreadsheet loaded.")
-                self.selected_file_label.setStyleSheet(f"""
-                    font-style: italic; color: #888899; margin: 20px 0; font-size:15px;
-                    font-family: '{FUTURISTIC_FONT_FAMILY}';
-                """)
-                self.proceed_button.setEnabled(False)
+                self.selected_file_label.setText("Please select a file to get started")
 
-    def submit_command(self) -> None:
-        command_text = self.command_input.text().strip()
-        if command_text:
-            self.output_text.append(f"User: {command_text}")
-            command_text += f"to EXCEL_FILE_PATH/app/sheet_data/{filename}"
-            # Now we have to make a call to the api
-            response = requests.post(url=CORE_SERVER_URL,
-                                     json={"sender": "user1",
-                                     "message": command_text})
-            print(response.text)
-            if response.status_code == requests.codes.ok:
-                messages = response.json()
-                for msg in messages:
-                    if 'text' in msg:
-                        self.output_text.append(f"Assistant: {msg['text']}")
-            else:
-                print("Error:", response.status_code, response.text)
-        self.command_input.clear()
-        return
+    def submit_AI_request(self) -> None:
+        prompt = self.prompt_input.text().strip()
+        if prompt:
+            # Append file path to request
+            prompt += f" EXCEL_FILE_PATH{self.file_path}"
+            # Attempt to get hold of server
+            try:
+                response = requests.post(url=CORE_SERVER_URL,
+                                         json={"sender": "user1",
+                                               "message": prompt})
+                # Check if response was accepted
+                if response.status_code == requests.codes.ok:
+                    self.output_text.append(f"User: {prompt}")
+                    messages = response.json()
+                    for msg in messages:
+                        if 'text' in msg:
+                            self.output_text.append(f"Calcite: {msg['text']}")
+            # Give warnings incase of exception
+            except Exception as e:
+                QMessageBox.warning(self, "Error", "The server was unable to accept your request, no changes made")
+            finally:
+                # Prepare for next message
+                self.prompt_input.clear()
 
-    def generate_receipt(self, command_context="Button click"):
-        if not self.selected_file_path:
-            self.output_text.append("❌ ALERT: No Data Matrix loaded. Cannot generate export.")
-            self.output_text.append("----------------------------------------")
-            return
-        self.wb = ExcelManager(self.selected_file_path)
-        self.wb.generate_receipt()
-        self.output_text.append(f"Receipts saved in: {Path('receipts').resolve()}")
-        self.output_text.append("----------------------------------------")
+    def on_generate_receipt_button_clicked(self):
+        receipt_client = ExcelManager(self.file_abs_path)
+        received_by, confirmed = QInputDialog.getText(self, "Assign receipt", "Who is receiving this receipt?")
+        if confirmed:
+            receipt_name = receipt_client.generate_receipt(received_by=received_by)
+            QMessageBox.information(self, "Receipt Generated", f"Receipt for latest transaction added at {receipt_name}")
 
-    @staticmethod
-    def past_receipts(self):
-        receipts_path = Path("receipts").resolve()
-
-        if not receipts_path.exists():
-            print("Receipts folder does not exist.")
-            return
+    def on_past_receipts_button_clicked(self):
+        receipts_path = (Path(__file__).parent / "receipts").resolve()
 
         if platform.system() == "Windows":
             os.startfile(receipts_path)
-        elif platform.system() == "Darwin":  # macOS
+        elif platform.system() == "Darwin":
             subprocess.Popen(["open", str(receipts_path)])
-        else:  # Linux
+        else:
             subprocess.Popen(["xdg-open", str(receipts_path)])
+
+    def create_setup_page(self):
+        self.setup_page = QWidget()
+        layout = QVBoxLayout(self.setup_page)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setContentsMargins(70, 50, 70, 50)
+        layout.setSpacing(30)
+
+        title_label = QLabel("First time setup")
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        layout.addWidget(title_label)
+
+        subtitle_label = QLabel("Connect. Configure. Done.")
+        subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        layout.addWidget(subtitle_label)
+
+        setup_group = QGroupBox("Let's get Calcite set up for you")
+        setup_group_layout = QFormLayout(setup_group)
+
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Yaz Raso")
+        
+        name_label = QLabel("Full Name:")
+        name_label.setAutoFillBackground(False)
+        setup_group_layout.addRow(name_label, self.name_input)
+
+        signature_field_layout = QHBoxLayout()
+        self.select_signature_button = QPushButton("Upload signature")
+        self.select_signature_button.clicked.connect(self.select_signature_file)
+        signature_field_layout.addWidget(self.select_signature_button)
+
+        self.signature_path_label = QLabel("No signature image selected.")
+        sig_label = QLabel("Signature Image:")
+        sig_label.setAutoFillBackground(False)
+        setup_group_layout.addRow(sig_label, signature_field_layout)
+
+        layout.addWidget(setup_group)
+
+        self.save_setup_button = QPushButton("Save and continue")
+        self.save_setup_button.clicked.connect(self.save_first_time_setup)
+
+        layout.addWidget(self.save_setup_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.stacked_widget.addWidget(self.setup_page)
+
+    def select_signature_file(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setWindowTitle("Select Signature File")
+        file_dialog.setNameFilter("JPEG and PNG only (*.jpg *.png)")
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        if file_dialog.exec():
+            self.selected_signature_path = file_dialog.selectedFiles()[0]
+
+    def save_first_time_setup(self):
+        user_name = self.name_input.text().strip()
+        if not user_name:
+            QMessageBox.warning(self, "Input Required", "Please enter your full name.")
+            return
+        if not self.selected_signature_path:
+            QMessageBox.warning(self, "Input Required", "Please select a signature image.")
+            return
+
+        try:
+            with open(CONFIG_FILE_PATH, 'r') as f:
+                config = json.load(f)
+
+            config["user"]["name"] = user_name
+            config["user"]["signaturePath"] = self.selected_signature_path
+            config["user"]["firstTime"] = False
+
+            with open(CONFIG_FILE_PATH, 'w') as f:
+                json.dump(config, f, indent=2)
+        except Exception as e:
+            QMessageBox.warning(self, "Save Failed", "Unable to save configuration")
+
+        else:
+            self.go_to_loading_page()
 
 
 if __name__ == "__main__":
@@ -732,6 +506,6 @@ if __name__ == "__main__":
             QFontDatabase.addApplicationFont(font_path)
     # Create and show the main window
     window = AccountingAssistantUI()
-    window.show()
+    window.showFullScreen()
     # Start the event loop
     sys.exit(app.exec())
