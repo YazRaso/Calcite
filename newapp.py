@@ -461,7 +461,7 @@ class AccountingAssistantUI(QMainWindow):
         file_dialog.setNameFilter("JPEG and PNG only (*.jpg *.png)")
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         if file_dialog.exec():
-            self.selected_signature_path = file_dialog.selectedFiles()
+            self.selected_signature_path = file_dialog.selectedFiles()[0]
 
     def save_first_time_setup(self):
         user_name = self.name_input.text().strip()
