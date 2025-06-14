@@ -30,8 +30,6 @@ services:
       - type: bind
         source: ${SHEET_PATH}
         target: /app/sheet_data
-    environment:
-      - PYTHONPATH=/app
     command: ["run", "actions", "--actions", "bot.actions", "--port", "5055"]
 
   duckling:
