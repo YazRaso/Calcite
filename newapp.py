@@ -85,7 +85,6 @@ class AccountingAssistantUI(QMainWindow):
         self.create_file_selection_page()
         self.create_main_interaction_page()
         self.create_setup_page()
-        self.stacked_widget.addWidget(self.loading_page)
         self.initialize_system()
 
     def setup_theme_system(self):
@@ -99,9 +98,9 @@ class AccountingAssistantUI(QMainWindow):
         # Add to status bar (or your app's header/navigation)
         self.statusBar().addPermanentWidget(self.theme_toggle)
 
-    def on_server_response(self):
-        if True or (server.check_server_health(
-                    ACTIONS_SERVER_HEALTH_URL) and server.check_server_health(
+    async def on_server_response(self):
+        if (await server.check_server_health(ACTIONS_SERVER_HEALTH_URL)
+           and await server.check_server_health(
                     CORE_SERVER_HEALTH_URL)):
             self.stacked_widget.setCurrentWidget(self.landing_page)
         else:
@@ -117,7 +116,7 @@ class AccountingAssistantUI(QMainWindow):
             if config['user']['firstTime']:
                 self.stacked_widget.setCurrentWidget(self.setup_page)
             else:
-                self.on_server_response()
+                self.go_to_loading_page()
 
     @Slot()
     def toggle_theme(self):
@@ -188,9 +187,7 @@ class AccountingAssistantUI(QMainWindow):
     def create_loading_screen(self):
         self.loading_page = QWidget()
         layout = QVBoxLayout(self.loading_page)
-
-        label = QLabel("Loading Calcite...")
-        label.setAlignment(Qt.AlignCenter)
+        layout.addStretch()
 
         with open(CONFIG_FILE_PATH, 'r') as f:
             data = json.load(f)
@@ -198,18 +195,26 @@ class AccountingAssistantUI(QMainWindow):
             first_time = data['user']['firstTime']
 
         if not first_time:
-            name = QLabel(f"{name}")
+            name = QLabel(f"Welcome back {name.split()[0]}!")
             name.setAlignment(Qt.AlignCenter)
+            name.setFont(QFont(FUTURISTIC_FONT_FAMILY, 28, QFont.Weight.Bold))
+            layout.addWidget(name)
+
+        label = QLabel("Loading Calcite...")
+        label.setAlignment(Qt.AlignCenter)
+
         progress = QProgressBar()
         progress.setRange(0, 0)  # Indeterminate
         progress.setFixedHeight(30)
 
-        layout.addStretch()
         layout.addWidget(label)
-        if not first_time:
-            layout.addWidget(name)
         layout.addWidget(progress)
         layout.addStretch()
+        self.stacked_widget.addWidget(self.loading_page)
+
+    def go_to_loading_page(self):
+        self.stacked_widget.setCurrentWidget(self.loading_page)
+        self.on_server_response()
 
     def create_error_page(self):
         self.error_page = QWidget()
@@ -486,8 +491,7 @@ class AccountingAssistantUI(QMainWindow):
             QMessageBox.warning(self, "Save Failed", "Unable to save configuration")
 
         else:
-            # Check server
-           self.on_server_response() 
+            self.go_to_loading_page()
 
 
 if __name__ == "__main__":
