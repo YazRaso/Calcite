@@ -19,11 +19,27 @@ def start_server() -> None:
         data = json.load(f)
         first_time = data["user"]["firstTime"]
 
-    docker_dir = Path(__file__).parent.parent / "docker"
     if first_time:
         # if first time build the docker image
+        docker_dir = (Path(__file__).parent.parent / "docker").resolve()
+        bot_dir = (Path(__file__).parent.parent / "bot").resolve()
+        actions_dir = (Path(__file__).parent.parent / "actions").resolve()
+        sheet_dir = (Path(__file__).parent.parent / "sheet_data").resolve()
+        core_dir = (Path(__file__).parent.parent / "core").resolve()
+
+        env_content = (
+            f"BOT_PATH={bot_dir}\n"
+            f"ACTIONS_PATH={actions_dir}\n"
+            f"CORE_PATH={core_dir}\n"
+            f"SHEET_DATA={sheet_dir}\n"
+        )
+
+        with open(docker_dir / ".env", "w") as f:
+            f.write(env_content)
+
         subprocess.Popen(["docker", "compose", "build", "--no-cache"],
                          cwd=docker_dir.resolve())
+
     subprocess.Popen(["docker", "compose", "up"], cwd=docker_dir.resolve())
 
 
