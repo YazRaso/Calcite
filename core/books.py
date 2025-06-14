@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from core import receipt
+from app.core import receipt
 
 
 class ExcelManager:

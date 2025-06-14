@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 import platform
 import subprocess
-from core.books import ExcelManager
-from utils import server
+from app.core.books import ExcelManager
+from app.utils import server
 from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, Slot, QTimer
 from PySide6.QtGui import QFont, QMovie, QFontDatabase
 from PySide6.QtWidgets import (
