@@ -165,7 +165,10 @@ class AccountingAssistantUI(QMainWindow):
                 font-size: 18px;
                 font-weight: bold;
                 color: {colors['primary']};
-                background-color: transparent;
+            }}
+            QGroupBox {{
+                border: 1px solid {colors['primary']};
+                padding: 2px
             }}
         """
         
@@ -186,14 +189,23 @@ class AccountingAssistantUI(QMainWindow):
 
         label = QLabel("Loading Calcite...")
         label.setAlignment(Qt.AlignCenter)
-        label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 20, QFont.Bold))
 
+        with open(CONFIG_FILE_PATH, 'r') as f:
+            data = json.load(f)
+            name = data['user']['name']
+            first_time = data['user']['firstTime']
+
+        if not first_time:
+            name = QLabel(f"{name}")
+            name.setAlignment(Qt.AlignCenter)
         progress = QProgressBar()
         progress.setRange(0, 0)  # Indeterminate
         progress.setFixedHeight(30)
 
         layout.addStretch()
         layout.addWidget(label)
+        if not first_time:
+            layout.addWidget(name)
         layout.addWidget(progress)
         layout.addStretch()
 
@@ -203,10 +215,8 @@ class AccountingAssistantUI(QMainWindow):
 
         label = QLabel("⚠️ System failed to load server!")
         label.setAlignment(Qt.AlignCenter)
-        label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 20, QFont.Bold))
 
         retry_button = QPushButton("Retry")
-        retry_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         retry_button.clicked.connect(self.initialize_system)
 
         layout.addStretch()
@@ -223,16 +233,12 @@ class AccountingAssistantUI(QMainWindow):
             "Calcite AI: Your personal accountant — on your desktop, 24/7"
         )
 
-        description_label.setFont(QFont(
-            FUTURISTIC_FONT_FAMILY, 16, QFont.Bold)
-                                  )
         description_label.setAlignment(Qt.AlignCenter)
         description_label.setWordWrap(True)
         layout.addWidget(description_label)
 
         start_button = QPushButton("Get Started")
         start_button.setFixedSize(200, 75)
-        start_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         start_button.clicked.connect(self.go_to_file_selection_page)
         layout.addWidget(start_button, alignment=Qt.AlignCenter)
         self.stacked_widget.addWidget(self.landing_page)
@@ -244,23 +250,19 @@ class AccountingAssistantUI(QMainWindow):
         layout.setAlignment(Qt.AlignCenter)
         # Create title label
         title_label = QLabel("Select spreadsheet")
-        title_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 28, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
         # Create select button
         select_button = QPushButton("Browse spreadsheets")
-        select_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         select_button.clicked.connect(self.on_select_file_button_clicked)
         # Create label to show selected file
         self.selected_file_label = QLabel("Please select a file to get started")
         self.selected_file_label.setAlignment(Qt.AlignCenter)
         # Create next button
         self.next_button = QPushButton("Next")
-        self.next_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         self.next_button.setEnabled(False)
         self.next_button.clicked.connect(self.go_to_main_interaction_page)
         # Create back button
         self.back_button = QPushButton("Back")
-        self.back_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         self.back_button.clicked.connect(self.go_to_landing_page)
         # Layout created widgets
         layout.addWidget(title_label)
@@ -277,22 +279,19 @@ class AccountingAssistantUI(QMainWindow):
         main_layout.setSpacing(25)
 
         self.current_file_header_label = QLabel("Spreadsheet")
-        self.current_file_header_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 24, QFont.Bold))
         main_layout.addWidget(self.current_file_header_label, alignment=Qt.AlignCenter)
 
-        input_group = QGroupBox("Chat")
+        input_group = QGroupBox("")
         input_layout = QGridLayout(input_group)
         input_layout.setSpacing(15)
 
         prompt_label = QLabel("Prompt")
-        prompt_label.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         self.prompt_input = QLineEdit()
         self.prompt_input.setPlaceholderText("Add a transaction of 30 AED, reference 200, for today at rate of 2.7")
         self.prompt_input.setMinimumHeight(42)
         self.prompt_input.returnPressed.connect(self.submit_AI_request)
 
         submit_button = QPushButton("Send")
-        submit_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         submit_button.clicked.connect(self.submit_AI_request)
 
         input_layout.addWidget(prompt_label, 0, 0)
@@ -301,29 +300,26 @@ class AccountingAssistantUI(QMainWindow):
 
         main_layout.addWidget(input_group)
 
-        output_group = QGroupBox("Calcite")
+        output_group = QGroupBox("")
         output_layout = QVBoxLayout(output_group)
         output_layout.setSpacing(15)
 
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
         self.output_text.setPlaceholderText("Ready when you are - Calcite")
-        self.output_text.setFont(QFont(FUTURISTIC_FONT_FAMILY, 14))
 
         output_layout.addWidget(self.output_text)
         main_layout.addWidget(output_group)
 
-        receipts_group = QGroupBox("Receipts")
+        receipts_group = QGroupBox("")
         receipts_layout = QHBoxLayout(receipts_group)
         receipts_layout.setSpacing(15)
 
         self.generate_receipt_button = QPushButton("Generate Receipt")
         self.generate_receipt_button.clicked.connect(self.on_generate_receipt_button_clicked)
-        self.generate_receipt_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
 
         self.past_receipts_button = QPushButton("Past Receipts")
         self.past_receipts_button.clicked.connect(self.on_past_receipts_button_clicked)
-        self.past_receipts_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
 
         receipts_layout.addWidget(self.generate_receipt_button)
         receipts_layout.addWidget(self.past_receipts_button)
@@ -331,7 +327,6 @@ class AccountingAssistantUI(QMainWindow):
         main_layout.addWidget(receipts_group)
 
         back_button = QPushButton("Back")
-        back_button.setFont(QFont(FUTURISTIC_FONT_FAMILY, 16))
         back_button.clicked.connect(self.go_to_file_selection_page)
 
         main_layout.addWidget(back_button, alignment=Qt.AlignCenter)
@@ -398,9 +393,10 @@ class AccountingAssistantUI(QMainWindow):
                 self.prompt_input.clear()
 
     def on_generate_receipt_button_clicked(self):
-        receipt_client = ExcelManager()
+        receipt_client = ExcelManager(self.file_path)
         receipt_name = receipt_client.generate_receipt()
         self.output_text.apppend(f"Calcite: Receipt for latest transaction added at {receipt_name}") 
+        QMessageBox.information(self, "Receipt Generated", f"Receipt for latest transaction added at {receipt_name}")
 
     def on_past_receipts_button_clicked(self):
         receipts_path = (Path(__file__).parent / "receipts").resolve()
@@ -429,22 +425,24 @@ class AccountingAssistantUI(QMainWindow):
         
         layout.addWidget(subtitle_label)
 
-        setup_group = QGroupBox("Tailor your experience")
+        setup_group = QGroupBox("Let's get Calcite set up for you")
         setup_group_layout = QFormLayout(setup_group)
 
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Enter your full name — used for receipts")
+        self.name_input.setPlaceholderText("Yaz Raso")
         
         name_label = QLabel("Full Name:")
+        name_label.setAutoFillBackground(False)
         setup_group_layout.addRow(name_label, self.name_input)
 
         signature_field_layout = QHBoxLayout()
-        self.select_signature_button = QPushButton("Select signature...")
+        self.select_signature_button = QPushButton("Upload signature")
         self.select_signature_button.clicked.connect(self.select_signature_file)
         signature_field_layout.addWidget(self.select_signature_button)
 
         self.signature_path_label = QLabel("No signature image selected.")
         sig_label = QLabel("Signature Image:")
+        sig_label.setAutoFillBackground(False)
         setup_group_layout.addRow(sig_label, signature_field_layout)
 
         layout.addWidget(setup_group)
@@ -459,7 +457,9 @@ class AccountingAssistantUI(QMainWindow):
         file_dialog = QFileDialog(self)
         file_dialog.setWindowTitle("Select Signature File")
         file_dialog.setNameFilter("JPEG and PNG only (*.jpg *.png)")
-        self.selected_signature_path, _ = file_dialog.getOpenFileName()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        if file_dialog.exec():
+            self.selected_signature_path = file_dialog.selectedFiles()
 
     def save_first_time_setup(self):
         user_name = self.name_input.text().strip()
@@ -470,13 +470,16 @@ class AccountingAssistantUI(QMainWindow):
             QMessageBox.warning(self, "Input Required", "Please select a signature image.")
             return
 
-        self.config["user"]["name"] = user_name
-        self.config["user"]["signaturePath"] = self.selected_signature_path
-        self.config["user"]["firstTime"] = False
         try:
-            with open(CONFIG_FILE_PATH, 'w') as f:
-                json.dump(self.config, f, indent=2)
+            with open(CONFIG_FILE_PATH, 'r') as f:
+                config = json.load(f)
 
+            config["user"]["name"] = user_name
+            config["user"]["signaturePath"] = self.selected_signature_path
+            config["user"]["firstTime"] = False
+
+            with open(CONFIG_FILE_PATH, 'w') as f:
+                json.dump(config, f, indent=2)
         except Exception as e:
             QMessageBox.warning(self, "Save Failed", "Unable to save configuration")
 

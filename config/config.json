@@ -1,7 +1,9 @@
 {
   "user": {
-    "firstTime": true,
-    "name": "",
-    "signaturePath": ""
+    "firstTime": false,
+    "name": "him",
+    "signaturePath": [
+      "/Users/yazraso/Desktop/Screenshot 2025-06-05 at 10.29.47\u202fPM.png"
+    ]
   }
 }
