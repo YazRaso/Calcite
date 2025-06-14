@@ -8,7 +8,7 @@ services:
     ports:
       - "5005:5005"
     volumes:
-      - ../bot:/app/bot
+      - ${BOT_PATH}:/app/bot
     depends_on:
       - duckling
     command: ["run", "--enable-api", "--debug", "--model", "/app/bot/models/", "--endpoints", "/app/bot/endpoints.yml", "--port", "5005"]
@@ -22,13 +22,13 @@ services:
       - "5055:5055"
     volumes:
       - type: bind
-        source: ../bot/actions
+        source: ${ACTIONS_PATH}
         target: /app/bot/actions
       - type: bind
-        source: ../core
+        source: ${CORE_PATH}
         target: /app/core
       - type: bind
-        source: ../sheet_data
+        source: ${SHEET_PATH}
         target: /app/sheet_data
     environment:
       - PYTHONPATH=/app
