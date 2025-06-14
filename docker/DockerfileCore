@@ -4,9 +4,9 @@ ENV APP_HOME=${APP_BASE}/app
 USER root
 RUN apt-get update && apt-get install -y git
 RUN mkdir -p ${APP_HOME} && useradd -m appuser && chown -R appuser:appuser ${APP_BASE}
+ENV PYTHONPATH "${PYTHONPATH}:${APP_BASE}"
 COPY . ${APP_HOME}
 WORKDIR ${APP_BASE}
-ENV PYTHONPATH "${PYTHONPATH}:${APP_BASE}"
 RUN if [ -f "${APP_HOME}/bot/actions/requirements_core.txt" ]; then \
       echo "Found ${APP_HOME}/bot/actions/requirements_core.txt, installing dependencies..." && \
       pip install --no-cache-dir --upgrade pip && \
