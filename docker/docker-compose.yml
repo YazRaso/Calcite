@@ -6,7 +6,7 @@ services:
       dockerfile: docker/DockerfileCore
     container_name: my_rasa_server 
     ports:
-      - "5005:5005"
+      - "127.0.0.1:5005:5005"
     volumes:
       - ${BOT_PATH}:/app/bot
     depends_on:
@@ -19,7 +19,7 @@ services:
       dockerfile: docker/DockerfileActions
     container_name: my_rasa_actions
     ports:
-      - "5055:5055"
+      - "127.0.0.1:5055:5055"
     volumes:
       - type: bind
         source: ${ACTIONS_PATH}
@@ -38,4 +38,4 @@ services:
     image: rasa/duckling:latest
     container_name: duckling
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
