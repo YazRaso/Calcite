@@ -3,8 +3,10 @@ import json
 from pathlib import Path
 
 
+CONFIG_FILE_PATH = (Path(__file__).parent.parent / 'config' / 'config.json').resolve()
+
 def generate_receipt(
-        filepath: str,
+        received_by: str,
         reference_id: str,
         transaction_date: str,
         amount: float,
@@ -23,8 +25,7 @@ def generate_receipt(
         currency (str): The currency of the transaction (e.g., "USD", "AED").
         text_color (str, optional): Color of the text. Defaults to "black".
     """
-    received_by = filepath.split("/")[-1].split(".")[0]
-    with open("../config/config.json", "r") as file:
+    with open(CONFIG_FILE_PATH, "r") as file:
         data = json.load(file)
     from_person = data["user"]["name"]
     signature_path = data["user"]["signature"]

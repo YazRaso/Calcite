@@ -27,7 +27,8 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QMessageBox,
     QFormLayout,
-    QProgressBar
+    QProgressBar,
+    QInputDialog
 )
 
 FUTURISTIC_FONT_FAMILY = "JetBrains Mono"
@@ -68,6 +69,7 @@ class AccountingAssistantUI(QMainWindow):
         self.setWindowTitle("Calcite - No Code Accounting")
         self.setGeometry(100, 100, 850, 700)
         self.file_path = None
+        self.file_abs_path = None
         self.current_theme = "light"
         self.selected_signature_path = ""
         # self.apply_global_styles()
@@ -336,7 +338,6 @@ class AccountingAssistantUI(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.landing_page)
     
     def go_to_file_selection_page(self):
-        self.file_path = None
         self.stacked_widget.setCurrentWidget(self.file_selection_page)
 
     def go_to_main_interaction_page(self):
@@ -355,7 +356,7 @@ class AccountingAssistantUI(QMainWindow):
             if selected_files:
                 # Get the file from the dialoge
                 self.file_path = selected_files[0]
-                self.file_path = Path(self.file_path).resolve()
+                self.file_abs_path = self.file_path = Path(self.file_path).resolve()
                 # Check if file is a child of sheet data
                 try:
                     self.file_path = self.file_path.relative_to(sheet_data_path)
@@ -393,10 +394,11 @@ class AccountingAssistantUI(QMainWindow):
                 self.prompt_input.clear()
 
     def on_generate_receipt_button_clicked(self):
-        receipt_client = ExcelManager(self.file_path)
-        receipt_name = receipt_client.generate_receipt()
-        self.output_text.apppend(f"Calcite: Receipt for latest transaction added at {receipt_name}") 
-        QMessageBox.information(self, "Receipt Generated", f"Receipt for latest transaction added at {receipt_name}")
+        receipt_client = ExcelManager(self.file_abs_path)
+        received_by, confirmed = QInputDialog.getText(self, "Assign receipt", "Who is receiving this receipt?")
+        if confirmed:
+            receipt_name = receipt_client.generate_receipt(received_by=received_by)
+            QMessageBox.information(self, "Receipt Generated", f"Receipt for latest transaction added at {receipt_name}")
 
     def on_past_receipts_button_clicked(self):
         receipts_path = (Path(__file__).parent / "receipts").resolve()

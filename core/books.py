@@ -99,7 +99,7 @@ class ExcelManager:
                 return True
         return False
 
-    def generate_receipt(self):
+    def generate_receipt(self, received_by):
         last_row = self.ws.max_row  # 1 based index of latest transaction
         if last_row <= 1:
             return
@@ -109,10 +109,8 @@ class ExcelManager:
         currency = self.ws.cell(row=last_row, column=2).value
         transaction_date = self.ws.cell(row=last_row, column=5).value
         reference_id = self.ws.cell(row=last_row, column=6).value
-        if None in (amount, currency, transaction_date, reference_id):
-            return
-        receipt_name = receipt.generate_receipt(reference_no=reference_id, amount_paid=amount, currency=currency,
-                         date_str=transaction_date)
+        receipt_name = receipt.generate_receipt(received_by=received_by, reference_id=reference_id, amount=amount, currency=currency,
+                         transaction_date=transaction_date)
         return receipt_name
 
     def save(self) -> None:
