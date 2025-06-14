@@ -80,7 +80,7 @@ class ExcelManager:
         if self.check_summary():
             last_row_idx = self.ws.max_row
             self.ws.insert_rows(idx=last_row_idx, amount=1)
-            for i in range(6):
+            for i in range(5):
                 # indices in openpyxl are 1-based
                 self.ws.cell(row=last_row_idx, column=(i + 1)).value = row[i]
         else:
@@ -89,8 +89,8 @@ class ExcelManager:
 
     def delete_transaction(self, reference_id: str) -> bool:
         first_row_number = 2
-        number_of_cols = 6
-        reference_id_column = 5
+        number_of_cols = 5
+        reference_id_column = 4
         for row in self.ws.iter_rows(min_row=first_row_number, max_col=number_of_cols):
             # Get transaction ID
             if row[reference_id_column].value == reference_id:
@@ -107,8 +107,8 @@ class ExcelManager:
             last_row -= 1
         amount = self.ws.cell(row=last_row, column=1).value
         currency = self.ws.cell(row=last_row, column=2).value
-        transaction_date = self.ws.cell(row=last_row, column=5).value
-        reference_id = self.ws.cell(row=last_row, column=6).value
+        transaction_date = self.ws.cell(row=last_row, column=4).value
+        reference_id = self.ws.cell(row=last_row, column=5).value
         receipt_name = receipt.generate_receipt(received_by=received_by, reference_id=reference_id, amount=amount, currency=currency,
                          transaction_date=transaction_date)
         return receipt_name
