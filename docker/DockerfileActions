@@ -5,7 +5,6 @@ USER root
 RUN mkdir -p ${APP_HOME} && useradd -m appuser && chown -R appuser:appuser ${APP_BASE}
 COPY . ${APP_HOME}
 WORKDIR ${APP_BASE}
-USER appuser
 ENV PYTHONPATH=${APP_BASE}
 RUN if [ -f "${APP_HOME}/bot/actions/requirements_action.txt" ]; then \
       echo "Found ${APP_HOME}/bot/actions/requirements_action.txt, installing dependencies..." && \
@@ -14,4 +13,5 @@ RUN if [ -f "${APP_HOME}/bot/actions/requirements_action.txt" ]; then \
     else \
       echo "${APP_HOME}/bot/actions/requirements_action.txt not found, skipping pip install."; \
     fi
+USER appuser
 EXPOSE 5055
