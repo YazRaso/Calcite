@@ -5,7 +5,7 @@ USER root
 RUN mkdir -p ${APP_HOME} && useradd -m appuser && chown -R appuser:appuser ${APP_BASE}
 ENV PYTHONPATH "${PYTHONPATH}:${APP_HOME}"
 COPY . ${APP_HOME}
-WORKDIR ${APP_BASE}
+WORKDIR ${APP_HOME}
 RUN if [ -f "${APP_HOME}/bot/actions/requirements_core.txt" ]; then \
       echo "Found ${APP_HOME}/bot/actions/requirements_core.txt, installing dependencies..." && \
       apt-get update && apt-get install -y git && \
