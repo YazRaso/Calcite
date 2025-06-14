@@ -4,14 +4,14 @@ services:
     build:
       context: ..  # Project root is parent directory
       dockerfile: docker/DockerfileCore
-    container_name: my_rasa_server 
+    container_name: my_rasa_server
     ports:
       - "127.0.0.1:5005:5005"
     volumes:
       - ${BOT_PATH}:/app/bot
     depends_on:
       - duckling
-    command: ["run", "--enable-api", "--debug", "--model", "/app/bot/models/", "--endpoints", "/app/bot/endpoints.yml", "--port", "5005"]
+    command: ["run", "--enable-api", "--debug", "--model", "/bot/models/", "--endpoints", "/app/bot/endpoints.yml", "--port", "5005"]
 
   actions:
     build:
