@@ -12,6 +12,7 @@ class AddTransaction(Action):
             self, dispatcher, tracker: Tracker, domain: Dict[str, Any],
             ):
         # Get slots
+        amount = currency = None
         try:
             file_path = tracker.get_slot("file_path") 
             file_path = file_path.strip().replace("\n", "").replace("EXCEL_FILE_PATH", "")
@@ -27,6 +28,9 @@ class AddTransaction(Action):
                             amount = amount_of_money[:i]
                             currency = amount_of_money[i:]
                             break
+                    else:
+                        amount = amount_of_money
+                        currency = None
             elif isinstance(amount_of_money, Dict):
                 amount = amount_of_money.get("value", 0)
                 currency = amount_of_money.get("unit", "None")
