@@ -6,7 +6,6 @@ RUN mkdir -p ${APP_HOME} && useradd -m appuser && chown -R appuser:appuser ${APP
 ENV PYTHONPATH "${PYTHONPATH}:${APP_BASE}"
 COPY . ${APP_HOME}
 WORKDIR ${APP_BASE}
-RUN mv /opt/rasa_project/app/models /opt/rasa_project/models
 RUN if [ -f "${APP_HOME}/bot/actions/requirements_core.txt" ]; then \
       echo "Found ${APP_HOME}/bot/actions/requirements_core.txt, installing dependencies..." && \
       apt-get update && apt-get install -y git && \
