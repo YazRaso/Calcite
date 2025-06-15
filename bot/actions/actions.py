@@ -11,7 +11,7 @@ class AddTransaction(Action):
         file_path = tracker.get_slot("file_path")
         conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")
-        amount_of_money = tracker.get_slot("amount_of_money")
+        amount_of_money = tracker.get_slot("amount-of-money")
         amount, currency = amount_of_money.get('value', 0), amount_of_money.get('unit', None)
         time = tracker.get_slot("time")
         if file_path:
