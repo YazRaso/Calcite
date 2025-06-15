@@ -31,7 +31,7 @@ def start_server() -> None:
             f"BOT_PATH={bot_dir}\n"
             f"ACTIONS_PATH={actions_dir}\n"
             f"CORE_PATH={core_dir}\n"
-            f"SHEET_DATA={sheet_dir}\n"
+            f"SHEET_PATH={sheet_dir}\n"
         )
 
         with open(docker_dir / ".env", "w") as f:
