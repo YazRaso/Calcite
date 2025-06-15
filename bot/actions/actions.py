@@ -30,7 +30,7 @@ class AddTransaction(Action):
                             break
                     else:
                         amount = amount_of_money
-                        currency = None
+                        currency = " "
             elif isinstance(amount_of_money, Dict):
                 amount = amount_of_money.get("value", 0)
                 currency = amount_of_money.get("unit", "None")
