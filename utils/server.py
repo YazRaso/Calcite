@@ -19,9 +19,9 @@ def start_server() -> None:
         data = json.load(f)
         first_time = data["user"]["firstTime"]
 
+    docker_dir = (Path(__file__).parent.parent / "docker").resolve()
     if first_time:
         # if first time build the docker image
-        docker_dir = (Path(__file__).parent.parent / "docker").resolve()
         bot_dir = (Path(__file__).parent.parent / "bot").resolve()
         actions_dir = (Path(__file__).parent.parent / "actions").resolve()
         sheet_dir = (Path(__file__).parent.parent / "sheet_data").resolve()
