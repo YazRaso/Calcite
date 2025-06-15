@@ -33,8 +33,6 @@ You can type:
 
 - `Add 150 USD at rate 3.5 with ref ID 2042`
 - `Delete transaction with ref 2042`
-- `Generate receipt for 2042`
-
 ---
 
 ## 🖼️ Output
