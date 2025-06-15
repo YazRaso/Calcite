@@ -1,34 +1,14 @@
 rules:
-  - rule: Activate Add Transaction
-    steps:
-      - intent: add_transaction
-      - action: add_transaction_form
-      - active_loop: add_transaction_form
 
-  - rule: Submit Add Transaction
-    condition:
-      - active_loop: add_transaction_form
-    steps:
-      - action: add_transaction_form
-      - active_loop: null
-      - action: add_transaction
-      - action: utter_transaction_added
-
-  - rule: Activate Delete Transaction
+  - rule: Delete Transaction
     steps:
       - intent: delete_transaction
-      - action: delete_transaction_form
-      - active_loop: delete_transaction_form
-
-  - rule: Submit Delete Transaction
-    condition:
-      - active_loop: delete_transaction_form
-    steps:
-      - action: delete_transaction_form
-      - active_loop: null
       - action: delete_transaction
-      - action: utter_transaction_deleted
 
+  - rule: Add Transaction
+    steps:
+      - intent: add_transaction
+      - action: add_transaction
   - rule: I do not understand
     steps:
       - intent: nlu_fallback
