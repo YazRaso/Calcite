@@ -10,11 +10,14 @@ class AddTransaction(Action):
 
     async def run(self, dispatcher, tracker: Tracker, domain: Dict[str, Any]):
         file_path = tracker.get_slot("file_path")
+        conversion_rate = tracker.get_slot("conversion_rate")
+        reference_id = tracker.get_slot("reference_id")
+        amount_of_money = tracker.get_slot("amount_of_money")
+        time = tracker.get_slot("time")
         if file_path:
             file_path = file_path.strip()
             if "EXCEL_FILE" in file_path:
                 file_path = file_path.replace("EXCEL_FILE", "")
-        amount_of_money = tracker.get_slot("amount_of_money")
         if isinstance(amount_of_money, str):
             amount_of_money = amount_of_money.split(maxsplit=1)
             if len(amount_of_money) > 1:
@@ -24,16 +27,10 @@ class AddTransaction(Action):
                 currency = " "
         else:
             amount, currency = amount_of_money['value'], amount_of_money['unit']
-        conversion_rate = tracker.get_slot("conversion_rate")
-        reference_id = tracker.get_slot("reference_id")
         if reference_id:
             reference_id = reference_id.strip().lower()
             if "reference" in reference_id:
                 reference_id = reference_id.replace("reference", "")
-        time = tracker.get_slot("time")
-        if not all([file_path, time, amount, currency, conversion_rate]):
-            dispatcher.utter_message(text="Some information is missing. Please try again.")
-            return []
         dispatcher.utter_message(
             text=f"Adding transaction amount: {amount} {currency}, conversion rate: {conversion_rate}, "
                  f"reference ID: {reference_id}, time: {time}"
@@ -43,7 +40,6 @@ class AddTransaction(Action):
                                          reference_id=reference_id, transaction_date=time)
         dispatcher.utter_message(text="Transaction added successfully.")
         return []
-
 
 class DeleteTransaction(Action):
     def name(self) -> str:
