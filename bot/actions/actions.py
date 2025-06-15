@@ -1,7 +1,6 @@
-
 from rasa_sdk import Action, Tracker
 from typing import Any, Dict
-import core as books
+from core import books
 
 
 class AddTransaction(Action):
@@ -17,7 +16,7 @@ class AddTransaction(Action):
         if file_path:
             file_path = file_path.strip()
             if "EXCEL_FILE" in file_path:
-                file_path = file_path.replace("EXCEL_FILE", "")
+                file_path = file_path.replace("EXCEL_FILE_PATH", "")
         if isinstance(amount_of_money, str):
             amount_of_money = amount_of_money.split(maxsplit=1)
             if len(amount_of_money) > 1:
@@ -40,6 +39,7 @@ class AddTransaction(Action):
                                          reference_id=reference_id, transaction_date=time)
         dispatcher.utter_message(text="Transaction added successfully.")
         return []
+
 
 class DeleteTransaction(Action):
     def name(self) -> str:
