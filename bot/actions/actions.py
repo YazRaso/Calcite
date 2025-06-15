@@ -24,7 +24,7 @@ class AddTransaction(Action):
                 currency = " "
         else:
             amount, currency = amount_of_money['value'], amount_of_money['unit']
-            conversion_rate = tracker.get_slot("conversion_rate")
+        conversion_rate = tracker.get_slot("conversion_rate")
         reference_id = tracker.get_slot("reference_id")
         if reference_id:
             reference_id = reference_id.strip().lower()
