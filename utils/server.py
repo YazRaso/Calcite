@@ -51,8 +51,10 @@ async def check_server_health(url: str) -> bool:
     """
     async with aiohttp.ClientSession() as session:
         for _ in range(300):
+            print(f"Ping {_}")
             try:
                 async with session.get(url) as response:
+                    print(response)
                     if response.status == 200:
                         return True
             except aiohttp.ClientConnectionError:
