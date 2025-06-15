@@ -107,8 +107,6 @@ class AccountingAssistantUI(QMainWindow):
             self.stacked_widget.setCurrentWidget(self.error_page)
 
     def initialize_system(self):
-        # Show loading screen
-        self.stacked_widget.setCurrentWidget(self.loading_page)
         # Boot up servers
         server.start_server()
         with open(CONFIG_FILE_PATH, "r") as f:
@@ -213,8 +211,8 @@ class AccountingAssistantUI(QMainWindow):
         self.stacked_widget.addWidget(self.loading_page)
 
     def go_to_loading_page(self):
-        self.stacked_widget.setCurrentWidget(self.loading_page)
         self.on_server_response()
+        self.stacked_widget.setCurrentWidget(self.loading_page)
 
     def create_error_page(self):
         self.error_page = QWidget()
