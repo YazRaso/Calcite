@@ -8,7 +8,7 @@ import platform
 import subprocess
 from core.books import ExcelManager
 from utils import server
-from PySide6.QtCore import Qt, QDir, Slot
+from PySide6.QtCore import Qt, QDir, Slot, QThread, QObject, Signal
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import (
     QApplication,
@@ -28,9 +28,6 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QProgressBar,
     QInputDialog,
-    QThread,
-    QObject,
-    Signal
 )
 
 FUTURISTIC_FONT_FAMILY = "JetBrains Mono"
