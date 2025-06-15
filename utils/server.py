@@ -37,27 +37,17 @@ def start_server() -> None:
         with open(docker_dir / ".env", "w") as f:
             f.write(env_content)
 
-        subprocess.Popen(["docker", "compose", "build", "--no-cache"],
+        subprocess.run(["docker", "compose", "build", "--no-cache"],
                          cwd=docker_dir.resolve())
 
     subprocess.Popen(["docker", "compose", "up"], cwd=docker_dir.resolve())
 
 
-async def check_server_health(url: str) -> bool:
-    """
-    Checks if the server is healthy
-    :param url: URL to poll
-    :return: True if healthy, False otherwise
-    """
-    async with aiohttp.ClientSession() as session:
-        for _ in range(300):
-            print(f"Ping {_}")
-            try:
-                async with session.get(url) as response:
-                    print(response)
-                    if response.status == 200:
-                        return True
-            except aiohttp.ClientConnectionError:
-                pass
-            await asyncio.sleep(1)
-    return False
+def check_servers_sync():
+    """Synchronously checks the health of both servers."""
+    try:
+        core_res = requests.get("http://localhost:5005/status", timeout=5)
+        actions_res = requests.get("http://localhost:5055/health", timeout=5)
+        return core_res.status_code == 200 and actions_res.status_code == 200
+    except requests.exceptions.RequestException:
+        return False

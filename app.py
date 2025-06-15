@@ -1,3 +1,4 @@
+import time
 import requests
 import os
 import sys
@@ -7,8 +8,8 @@ import platform
 import subprocess
 from core.books import ExcelManager
 from utils import server
-from PySide6.QtCore import Qt, QDir, QStandardPaths, QSize, Slot, QTimer
-from PySide6.QtGui import QFont, QMovie, QFontDatabase
+from PySide6.QtCore import Qt, QDir, Slot
+from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -22,13 +23,14 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QStackedWidget,
     QGridLayout,
-    QSpacerItem,
-    QSizePolicy,
     QGroupBox,
     QMessageBox,
     QFormLayout,
     QProgressBar,
-    QInputDialog
+    QInputDialog,
+    QThread,
+    QObject,
+    Signal
 )
 
 FUTURISTIC_FONT_FAMILY = "JetBrains Mono"
@@ -61,6 +63,35 @@ COLORS = {
         "warning": "#FF9F1C"
     }
 }
+
+
+class ServerCheckWorker(QObject):
+    finished = Signal(bool)
+
+    @Slot()
+    def run(self):
+        """
+        Polls server health endpoints for up to 60 seconds
+        before giving up.
+        """
+        start_time = time.time()
+        timeout_seconds = 300
+
+        while time.time() - start_time < timeout_seconds:
+            try:
+                if server.check_servers_sync():
+                    print("Servers are up and running!")
+                    self.finished.emit(True)
+                    return
+            except Exception as e:
+                # This handles cases where the server is not even listening yet
+                print(f"Server check failed with exception: {e}")
+
+            print("Servers not ready yet, retrying in 2 seconds...")
+            time.sleep(2) # Wait for 2 seconds before retrying
+
+        print("Server check timed out after 60 seconds.")
+        self.finished.emit(False)
 
 
 class AccountingAssistantUI(QMainWindow):
@@ -98,14 +129,16 @@ class AccountingAssistantUI(QMainWindow):
         # Add to status bar (or your app's header/navigation)
         self.statusBar().addPermanentWidget(self.theme_toggle)
 
-    async def on_server_response(self):
-        if (await server.check_server_health(ACTIONS_SERVER_HEALTH_URL)
-           and await server.check_server_health(
-                    CORE_SERVER_HEALTH_URL)):
+    @Slot(bool)
+    def on_server_check_finished(self, success):
+        """Handles the result from the server check worker."""
+        if success:
             self.stacked_widget.setCurrentWidget(self.landing_page)
         else:
             self.stacked_widget.setCurrentWidget(self.error_page)
 
+        self.server_check_thread.quit()
+        self.server_check_thread.wait()
     def initialize_system(self):
         # Boot up servers
         server.start_server()
@@ -211,8 +244,16 @@ class AccountingAssistantUI(QMainWindow):
         self.stacked_widget.addWidget(self.loading_page)
 
     def go_to_loading_page(self):
-        self.on_server_response()
         self.stacked_widget.setCurrentWidget(self.loading_page)
+
+        self.server_check_thread = QThread()
+        self.worker = ServerCheckWorker()
+        self.worker.moveToThread(self.server_check_thread)
+
+        self.server_check_thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.on_server_check_finished)
+
+        self.server_check_thread.start()
 
     def create_error_page(self):
         self.error_page = QWidget()
