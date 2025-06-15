@@ -20,6 +20,7 @@ All transactions are stored and managed via Excel files, and receipts are auto-g
   - `rate`
   - `currency`
   - `reference ID`
+  - `date`
 - Generate image-based receipts
 - All actions are accessible via a simple GUI
 - Local-only, no cloud dependencies
