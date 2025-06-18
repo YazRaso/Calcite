@@ -10,11 +10,10 @@ class AddTransaction(Action):
     async def run(self, dispatcher, tracker: Tracker, domain: Dict[str, Any]):
         for e in tracker.latest_message["entities"]:
             if e.get("entity") == "amount-of-money":
-                dispatcher.utter_message(text=f"{e}")
+                amount_of_money = e['text']['additional_info']
         file_path = tracker.get_slot("file_path")
         conversion_rate = tracker.get_slot("number")
         reference_id = tracker.get_slot("reference_id")
-        amount_of_money = tracker.get_slot("amount-of-money")
         if amount_of_money and isinstance(amount_of_money, dict):
             amount, currency = amount_of_money.get('value', 0), amount_of_money.get('unit', None)
         else:
