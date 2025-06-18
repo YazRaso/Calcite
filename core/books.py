@@ -109,8 +109,8 @@ class ExcelManager:
         currency = self.ws.cell(row=last_row, column=2).value
         transaction_date = self.ws.cell(row=last_row, column=4).value
         reference_id = self.ws.cell(row=last_row, column=5).value
-        receipt_name = receipt.generate_receipt(received_by=received_by, reference_id=reference_id, amount=amount, currency=currency,
-                         transaction_date=transaction_date)
+        receipt_name = receipt.generate_receipt(received_by=str(received_by), reference_id=str(reference_id), amount=str(amount), currency=str(currency),
+                                                transaction_date=str(transaction_date))
         return receipt_name
 
     def save(self) -> None:
