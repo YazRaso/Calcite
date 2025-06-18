@@ -16,6 +16,7 @@ class AddTransaction(Action):
             amount, currency = amount_of_money.get('value', 0), amount_of_money.get('unit', None)
         else:
             dispatcher.utter_message(text="Unable to add transaction, no changes made")
+            return []
         time = tracker.get_slot("time")
         if file_path:
             file_path = file_path.strip()
