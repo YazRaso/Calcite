@@ -10,10 +10,10 @@ nlu:
    examples: |
     - Add a transaction
     - I want to add a transaction
-    - Please add a transaction reference [231c](reference_id) of [500 USD](amount-of-money) rate [0.212](number) for [today](time) EXCEL_FILE_PATH[/Users/John/report.xls](file_path)
+    - Please add a transaction reference [231c](reference_id) of [500 USD](amount_of_money) rate [0.212](number) for [today](time) EXCEL_FILE_PATH[/Users/John/report.xls](file_path)
     - Can you add a transaction for me?
     - Add a new transaction
-    - Record a transaction [2300 AED](amount-of-money) rate [3.67](number) for [10/21/2024](time) reference [12c5](reference_id) EXCEL_FILE_PATH[/data/transactions.xls](file_path)
+    - Record a transaction [2300 AED](amount_of_money) rate [3.67](number) for [10/21/2024](time) reference [12c5](reference_id) EXCEL_FILE_PATH[/data/transactions.xls](file_path)
     - Log a transaction
  - intent: delete_transaction
    examples: |
