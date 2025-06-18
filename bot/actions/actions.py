@@ -9,13 +9,13 @@ class AddTransaction(Action):
 
     async def run(self, dispatcher, tracker: Tracker, domain: Dict[str, Any]):
         file_path = tracker.get_slot("file_path")
-        conversion_rate = tracker.get_slot("conversion_rate")
+        conversion_rate = tracker.get_slot("number")
         reference_id = tracker.get_slot("reference_id")
-        amount_of_money = tracker.get_slot("amount_of_money")
+        amount_of_money = tracker.get_slot("amount-of-money")
         if amount_of_money and isinstance(amount_of_money, dict):
             amount, currency = amount_of_money.get('value', 0), amount_of_money.get('unit', None)
         else:
-            dispatcher.utter_message(text="Unable to add transaction, no changes made")
+            dispatcher.utter_message(text=f"{amount_of_money} Unable to add transaction, no changes made")
             return []
         time = tracker.get_slot("time")
         if file_path:
