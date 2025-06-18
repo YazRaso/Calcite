@@ -414,7 +414,7 @@ class AccountingAssistantUI(QMainWindow):
         prompt = self.prompt_input.text().strip()
         if prompt:
             # Append file path to request
-            prompt += f" EXCEL_FILE_PATH{self.file_path}"
+            prompt += f" EXCEL_FILE_PATH/app/sheet_data/{self.file_path}"
             # Attempt to get hold of server
             try:
                 response = requests.post(url=CORE_SERVER_URL,
