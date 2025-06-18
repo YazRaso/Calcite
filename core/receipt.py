@@ -10,7 +10,7 @@ def generate_receipt(
         received_by: str,
         reference_id: str,
         transaction_date: str,
-        amount: float,
+        amount: str,
         currency: str,
         text_color: str = "black",
 ):
