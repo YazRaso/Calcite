@@ -10,7 +10,7 @@ class AddTransaction(Action):
     async def run(self, dispatcher, tracker: Tracker, domain: Dict[str, Any]):
         for e in tracker.latest_message["entities"]:
             if e.get("entity") == "amount-of-money":
-                amount_of_money = e['text']['additional_info']
+                amount_of_money = e[1]['text']['additional_info']
         file_path = tracker.get_slot("file_path")
         conversion_rate = tracker.get_slot("number")
         reference_id = tracker.get_slot("reference_id")
