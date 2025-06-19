@@ -77,7 +77,6 @@ class ServerCheckWorker(QObject):
         while time.time() - start_time < timeout_seconds:
             try:
                 if server.check_servers_sync():
-                    print("Servers are up and running!")
                     self.finished.emit(True)
                     return
             except Exception as e:
@@ -387,7 +386,7 @@ class AccountingAssistantUI(QMainWindow):
     def on_select_file_button_clicked(self):
         file_dialog = QFileDialog(self)
         file_dialog.setWindowTitle("Select Spreadsheet")
-        file_dialog.setNameFilter("Excel Files (*.xlsx *.xls *xlsm)")
+        file_dialog.setNameFilter("Excel Files (*.xlsx)")
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         sheet_data_path = Path(__file__).parent / "sheet_data"
         file_dialog.setDirectory(str(sheet_data_path))
