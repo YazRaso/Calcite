@@ -73,3 +73,9 @@ def test_delete_transaction_1(temp_client):
     assert all(temp_client.ws.cell(row=row_to_check,
                                    column=i+1).value is None
                for i in range(5))
+
+
+def test_delete_transaction_2(temp_client):
+    non_existent_ref = "This transaction wouldn't exist"
+    transaction_deleted = temp_client.delete_transaction(reference_id=non_existent_ref)
+    assert not transaction_deleted
