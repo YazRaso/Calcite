@@ -8,7 +8,7 @@ class ExcelManager:
     Attributes:
         filepath (str): Path to the Excel workbook
     Methods:
-        load_or_create(): Creates a new Excel workbook if it doesn't exist else loads it.
+        load(): Creates a new Excel workbook if it doesn't exist else loads it.
         add_transaction(
         amount, currency, conversion_rate, transaction_date, reference_id
         ): Adds a transaction to the Excel workbook.
@@ -27,9 +27,9 @@ class ExcelManager:
                         'Conversion Rate', 'Transaction Date',
                         'Reference ID']
 
-        self.load_or_create()
+        self.load()
 
-    def load_or_create(self) -> None:
+    def load(self) -> None:
         """
         Loads a given Excel workbook
         :return: None
@@ -40,23 +40,6 @@ class ExcelManager:
             self.ws.cell(row=1, column=col_num, value=header)
 
         self.save()
-
-    def check_summary(self) -> bool:
-        """
-        check_summary checks whether the workbook has a summary row
-        :return:
-        """
-        last_row_idx = self.ws.max_row
-        # The workbook is either empty, or only contains the headers
-        if not last_row_idx or last_row_idx <= 1:
-            return False
-        possible_words = {"summary", "total", "sum"}
-        for row in self.ws.iter_rows(min_row=2, max_row=last_row_idx, max_col=7):
-            for cell in row:
-                if cell.data_type == 'f' or (cell.value and isinstance(cell.value, str)
-                                             and cell.value.lower() in possible_words):
-                    return True
-        return False
 
     def add_transaction(self, amount: float, currency: str, conversion_rate: float,
                         transaction_date: str, reference_id: str) -> None:
@@ -76,22 +59,17 @@ class ExcelManager:
             transaction_date,
             reference_id
         ]
-        # If the last row is a summary,
-        if self.check_summary():
-            last_row_idx = self.ws.max_row
-            self.ws.insert_rows(idx=last_row_idx, amount=1)
-            for i in range(5):
-                # indices in openpyxl are 1-based
-                self.ws.cell(row=last_row_idx, column=(i + 1)).value = row[i]
-        else:
-            self.ws.append(row)
+
+        self.ws.append(row)
         self.save()
 
     def delete_transaction(self, reference_id: str) -> bool:
         first_row_number = 2
         number_of_cols = 5
         reference_id_column = 4
-        for row in self.ws.iter_rows(min_row=first_row_number, max_col=number_of_cols):
+        for row in self.ws.iter_rows(
+                min_row=first_row_number,
+                max_col=number_of_cols):
             # Get transaction ID
             if row[reference_id_column].value == reference_id:
                 self.ws.delete_rows(row[0].row)
@@ -109,8 +87,8 @@ class ExcelManager:
         currency = self.ws.cell(row=last_row, column=2).value
         transaction_date = self.ws.cell(row=last_row, column=4).value
         reference_id = self.ws.cell(row=last_row, column=5).value
-        receipt_name = receipt.generate_receipt(received_by=received_by, reference_id=reference_id, amount=amount, currency=currency,
-                         transaction_date=transaction_date)
+        receipt_name = receipt.generate_receipt(received_by=str(received_by), reference_id=str(reference_id), amount=amount, currency=str(currency),
+                                                transaction_date=str(transaction_date))
         return receipt_name
 
     def save(self) -> None:
