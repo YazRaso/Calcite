@@ -1,0 +1,62 @@
+version: "3.1"
+nlu:
+ - regex: file_path
+   examples: |
+    - EXCEL_FILE_PATH\s*([\w\/\\:. -]+\.xls(?:x|m)?)
+ - regex: reference_id
+   examples: |
+    - (?i)reference\s*([^\s]+)
+ - intent: add_transaction
+   examples: |
+    - Add a transaction
+    - I want to add a transaction
+    - Please add a transaction reference [231c](reference_id) of [500 USD](amount-of-money) rate [0.212](number) for [today](time) EXCEL_FILE_PATH[/Users/John/report.xls](file_path)
+    - Can you add a transaction for me?
+    - Add a new transaction
+    - Record a transaction [2300 AED](amount-of-money) rate [3.67](number) for [10/21/2024](time) reference [12c5](reference_id) EXCEL_FILE_PATH[/data/transactions.xls](file_path)
+    - Log a transaction
+ - intent: delete_transaction
+   examples: |
+     - Delete a transaction REFERENCE[mark25](reference_id) EXCEL_FILE_PATH[super/transactions.xls](file_path)
+     - I want to delete a transaction
+     - Please delete a transaction reference [23452](reference_id) EXCEL_FILE_PATH[/data/report.xlsm](file_path)
+     - Can you remove a transaction for me?
+     - Remove a transaction EXCEL_FILE_PATH[/home/user/data/report.xls](file_path) reference [567abc10](reference_id)
+ - intent: greet
+   examples: |
+     - Hi
+     - Hello
+     - Hey
+     - Greetings
+     - Good morning
+     - Good afternoon
+     - Good evening
+ - intent: goodbye
+   examples: |
+     - Bye
+     - Goodbye
+     - See you later
+     - Take care
+     - Farewell
+     - Until next time
+ - intent: affirm
+   examples: |
+     - Correct
+     - Yes, that's right
+     - Go ahead
+     - Yes
+     - Sure
+     - Definitely
+     - Sounds good
+ - intent: deny
+   examples: |
+     - No
+     - Not correct
+     - Don't do that
+     - No, that's not right
+     - I don't think so
+     - Absolutely not
+     - Never mind
+     - scratch that
+     - cancel
+     - that is wrong

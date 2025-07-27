@@ -1,0 +1,39 @@
+services:
+  rasa:
+    image: yazr/calcite
+    build:
+      context: ..  # Project root is parent directory
+      dockerfile: docker/DockerfileCore
+    container_name: my_rasa_server
+    ports:
+      - "127.0.0.1:5005:5005"
+    volumes:
+      - ${BOT_PATH}:/app/bot
+    depends_on:
+      - duckling
+    command: ["run", "--enable-api", "--debug", "--model", "/opt/rasa_project/app/bot/models", "--endpoints", "/opt/rasa_project/app/bot/endpoints.yml", "--port", "5005"]
+
+  actions:
+    build:
+      context: ..
+      dockerfile: docker/DockerfileActions
+    container_name: my_rasa_actions
+    ports:
+      - "127.0.0.1:5055:5055"
+    volumes:
+      - type: bind
+        source: ${ACTIONS_PATH}
+        target: /app/bot/actions
+      - type: bind
+        source: ${CORE_PATH}
+        target: /app/core
+      - type: bind
+        source: ${SHEET_PATH}
+        target: /app/sheet_data
+    command: ["run", "actions", "--actions", "bot.actions", "--port", "5055"]
+
+  duckling:
+    image: rasa/duckling:latest
+    container_name: duckling
+    ports:
+      - "127.0.0.1:8000:8000"

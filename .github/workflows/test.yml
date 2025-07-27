@@ -1,0 +1,38 @@
+name: Run Unit Tests
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          cd ./bot/actions
+          python -m pip install --upgrade pip
+          pip install -r requirements_app.txt
+          pip install -r requirements_core.txt
+          pip install pytest
+
+      - name: Run tests
+        env:
+          PYTHONPATH=. pytest
+        run: |
+          sudo apt install tree
+          tree .
+          pwd
+          find . -name "receipt_template.png"
+          pytest tests/test_books.py tests/test_receipts.py
+
