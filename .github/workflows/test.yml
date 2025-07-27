@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests
         env:
-          PYTHONPATH=.
+          PYTHONPATH: .
         run: |
           sudo apt install tree
           tree .
