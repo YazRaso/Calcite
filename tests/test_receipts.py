@@ -3,15 +3,13 @@ import os
 from pathlib import Path
 from ..core.receipt import generate_receipt
 import json
-from PIL import features
-from PIL import Image
+
 try:
     img = Image.open('assets/receipt_template.png')
     img.verify()
     print("Image is valid")
 except Exception as e:
     print("Image open error:", e)
-print("PIL PNG support:", features.check('png'))
 
 def test_generate_receipt():
     print("Current working directory:", os.getcwd())
