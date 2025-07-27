@@ -22,8 +22,7 @@ jobs:
         run: |
           cd ./bot/actions
           python -m pip install --upgrade pip
-          pip install -r requirements_app.txt
-          pip install -r requirements_core.txt
+          pip install -r requirements_actions.txt
           pip install pytest
 
       - name: Run tests
