@@ -77,6 +77,22 @@ class ExcelManager:
                 return True
         return False
 
+    def generate_receipt_by_id(self, received_by, reference_id):
+        first_row_number = 2
+        number_of_cols = 5
+        reference_id_column = 4
+        for row in self.ws.iter_rows(min_row=first_row_number,
+                                     max_col=number_of_cols):
+            if row[reference_id_column].value == reference_id:
+                amount = self.ws.cell(row=row, column=1).value
+                currency = self.ws.cell(row=row, column=2).value
+                transaction_date = self.ws.cell(row=row, column=4).value
+                reference_id = self.ws.cell(row=row, column=5).value
+                receipt_name = receipt.generate_receipt(received_by=str(received_by), reference_id=str(reference_id), amount=amount, currency=str(currency),
+                                                        transaction_date=str(transaction_date))
+                return receipt_name
+        return "No such transaction was found, no receipt generated"
+
     def generate_receipt(self, received_by):
         last_row = self.ws.max_row  # 1 based index of latest transaction
         if last_row <= 1:

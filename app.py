@@ -435,10 +435,39 @@ class AccountingAssistantUI(QMainWindow):
 
     def on_generate_receipt_button_clicked(self):
         receipt_client = ExcelManager(self.file_abs_path)
+        
+        choice, ok = QInputDialog.getItem(
+            self, 
+            "Receipt Generation", 
+            "Choose receipt type:",
+            ["Latest Transaction", "Specific Transaction ID"], 
+            0, 
+            False
+        )
+        
+        if not ok:
+            return
+            
         received_by, confirmed = QInputDialog.getText(self, "Assign receipt", "Who is receiving this receipt?")
-        if confirmed:
+        if not confirmed:
+            return
+            
+        if choice == "Latest Transaction":
             receipt_name = receipt_client.generate_receipt(received_by=received_by)
-            QMessageBox.information(self, "Receipt Generated", f"Receipt for latest transaction added at {receipt_name}")
+            if receipt_name:
+                QMessageBox.information(self, "Receipt Generated", f"Receipt for latest transaction added at {receipt_name}")
+            else:
+                QMessageBox.warning(self, "No Transaction", "No transactions found to generate receipt from.")
+        else:
+            reference_id, confirmed = QInputDialog.getText(self, "Transaction ID", "Enter the transaction reference ID:")
+            if confirmed and reference_id.strip():
+                receipt_name = receipt_client.generate_receipt_by_id(received_by=received_by, reference_id=reference_id.strip())
+                if receipt_name and receipt_name != "No such transaction was found, no receipt generated":
+                    QMessageBox.information(self, "Receipt Generated", f"Receipt for transaction {reference_id} added at {receipt_name}")
+                else:
+                    QMessageBox.warning(self, "Transaction Not Found", f"No transaction found with reference ID: {reference_id}")
+            else:
+                QMessageBox.warning(self, "Input Required", "Please enter a valid transaction reference ID.")
 
     def on_past_receipts_button_clicked(self):
         receipts_path = (Path(__file__).parent / "receipts").resolve()
