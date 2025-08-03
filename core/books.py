@@ -83,10 +83,11 @@ class ExcelManager:
         for row in self.ws.iter_rows(min_row=first_row_number,
                                      max_col=number_of_cols):
             if row[reference_id_column].value == reference_id:
-                amount = self.ws.cell(row=row, column=1).value
-                currency = self.ws.cell(row=row, column=2).value
-                transaction_date = self.ws.cell(row=row, column=4).value
-                reference_id = self.ws.cell(row=row, column=5).value
+                row_number = row[0].row  # Get the actual row number
+                amount = self.ws.cell(row=row_number, column=1).value
+                currency = self.ws.cell(row=row_number, column=2).value
+                transaction_date = self.ws.cell(row=row_number, column=4).value
+                reference_id = self.ws.cell(row=row_number, column=5).value
                 receipt_name = receipt.generate_receipt(received_by=str(received_by), reference_id=str(reference_id), amount=amount, currency=str(currency),
                                                         transaction_date=str(transaction_date))
                 return receipt_name
