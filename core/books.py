@@ -13,7 +13,6 @@ class ExcelManager:
         amount, currency, conversion_rate, transaction_date, reference_id
         ): Adds a transaction to the Excel workbook.
         delete_transaction(): Deletes a transaction from the Excel workbook.
-        check_summary(): checks if the workbook has a summary row
     """
 
     def __init__(self, filepath: str) -> None:
@@ -97,8 +96,6 @@ class ExcelManager:
         last_row = self.ws.max_row  # 1 based index of latest transaction
         if last_row <= 1:
             return
-        if self.check_summary():
-            last_row -= 1
         amount = self.ws.cell(row=last_row, column=1).value
         currency = self.ws.cell(row=last_row, column=2).value
         transaction_date = self.ws.cell(row=last_row, column=4).value
