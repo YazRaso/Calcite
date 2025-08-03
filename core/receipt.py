@@ -51,7 +51,7 @@ def generate_receipt(
         draw.text(positions["date_value"], transaction_date, fill=text_color, font=font)
         draw.text(positions["from_person_value"], from_person, fill=text_color, font=font)
 
-        draw.text(positions["acct_paid_amount_value"], amount, fill=text_color, font=font)
+        draw.text(positions["acct_paid_amount_value"], str(amount), fill=text_color, font=font)
         draw.text(positions["acct_paid_currency_text"], currency, fill=text_color, font=font)
 
         draw.text(positions["received_by_value"], received_by, fill=text_color, font=font)
