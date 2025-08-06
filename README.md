@@ -1,64 +1,39 @@
 # Calcite
 
-**An AI Agent that does your accounting for you — from managing spreadsheets to generating receipts.**
+> 🧮 Like Copilot, but for bookkeeping.  
+> A local-first, voice-enabled desktop assistant that automates transactions and generates receipts.
+
+**Calcite** is a production-grade desktop app that manages your financial records via natural language.  
+It parses spoken or written commands like:  
+`"Add a transaction for 5000 USD at rate 0.25 reference 4392 for today"`  
+and updates your Excel file, generates a receipt image, and provides voice feedback — all processed locally.
 
 ---
 
-## 🚀 What is Calcite?
+## 🔧 Features
 
-Calcite is a local desktop AI assistant that automates bookkeeping tasks like adding/deleting transactions and generating receipts. It uses Rasa for natural language understanding, a Qt GUI frontend, and Docker for deployment.
-
-All transactions are stored and managed via Excel files, and receipts are auto-generated as images.
-
----
-
-## 🧠 Features
-
-- Add or delete transactions using natural language
-- AI auto-extracts:
-  - `amount`
-  - `rate`
-  - `currency`
-  - `reference ID`
-  - `date`
-- Generate image-based receipts
-- All actions are accessible via a simple GUI
-- Local-only, no cloud dependencies
-- Fully Dockerized for easy setup
+- 🧠 Intent parsing with Rasa and Duckling
+- 🗣️ Voice command support using OpenAI Whisper
+- 🧾 Excel transaction management via `openpyxl`
+- 🖼️ Receipt image generation with `Pillow`
+- 🖥️ Desktop GUI built using PyQt5
+- 🐳 Dockerized deployment
+- ✅ CI integration with GitHub Actions
 
 ---
 
-## 💬 Example Phrases
+## 🚀 Quick Start
 
-You can type:
-
-- `Add 150 USD at rate 3.5 with ref ID 2042`
-- `Delete transaction with ref 2042`
----
-
-## 🖼️ Output
-
-Receipts are saved as **images** in the `receipts/` directory.  
-Excel files must be placed **inside the `sheet_data/` directory or its subfolders** for the app to access them.
-
----
-
-## 🧰 Tech Stack
-
-- [Rasa](https://rasa.com) – NLP + intent recognition  
-- [PyQt](https://riverbankcomputing.com/software/pyqt/) – GUI  
-- [Docker](https://www.docker.com) – Containerization  
-- `openpyxl` – Excel editing  
-- `Pillow` – Receipt image generation
-
----
-
-## ⚡ Quick Start (Docker)
+### 1. Clone the repository
 
 ```bash
-# Clone the repo
-git clone https://github.com/YazRaso/Calcite.git
-cd Calcite
+git clone https://github.com/YazRaso/calcite.git
+cd .Calcite/bot/actions
+pip install -r requirements_core.txt
+chmod u+x ./start.sh
+./start.sh
+```
 
-# Build and run everything
-docker compose up --build
+
+
+
