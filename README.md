@@ -28,9 +28,21 @@ and updates your Excel file, generates a receipt image, and provides voice feedb
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Unix Systems: Linux, Mac)
 ```bash
 git clone https://github.com/YazRaso/calcite.git
+python3.9 -m venv .venv
+source .venv/bin/activate
+cd Calcite/bot/actions
+pip install -r requirements_core.txt
+chmod u+x ./start.sh
+./start.sh
+```
+## 🚀 Quick Start (Windows)
+```bash
+git clone https://github.com/YazRaso/calcite.git
+python3.9 -m venv .venv
+source .venv/scripts/activate
 cd Calcite/bot/actions
 pip install -r requirements_core.txt
 chmod u+x ./start.sh
