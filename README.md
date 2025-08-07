@@ -6,7 +6,7 @@
 **Calcite** is a production-grade desktop app that manages your financial records via natural language.  
 It parses commands like:  
 `"Add a transaction for 5000 USD at rate 0.25 reference 4392 for today"`  
-and updates your Excel file, generates a receipt image, and provides voice feedback — all processed locally.
+and updates your Excel file, generates a receipt image — all processed locally.
 
 ---
 
