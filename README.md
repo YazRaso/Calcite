@@ -1,7 +1,7 @@
 # Calcite
 
 > 🧮 Like Copilot, but for bookkeeping.  
-> A local-first, AI agent that writes transactions and generates receipts.
+> A local-first, AI agent that writes transactions and generates receipts, with heavy emphasis on user privacy.
 
 **Calcite** is a production-grade desktop app that manages your financial records via natural language.  
 It parses commands like:  
