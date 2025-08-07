@@ -26,8 +26,6 @@ and updates your Excel file, generates a receipt image, and provides voice feedb
 - 🐳 Dockerized deployment
 - ✅ CI integration with GitHub Actions
 
----
-
 ## 🚀 Quick Start (Unix Systems: Linux, Mac)
 ```bash
 git clone https://github.com/YazRaso/calcite.git
@@ -48,6 +46,12 @@ pip install -r requirements_core.txt
 chmod u+x ./start.sh
 ./start.sh
 ```
+
+---
+## 🐳 Docker build fail?
+The build may fail on some systems due to the relative imports done by the provided .env file
+Create a .env file in the ```bash cd Calcite/docker``` directory
+1. set the following paths (absolute path required) BOT_PATH, ACTIONS_PATH, CORE_PATH, SHEET_PATH; where X_PATH is the path to the directory with that name e.g sheet_data
 
 ## 😄 Welcome to Calcite
 Upload your name and signature (displayed on receipts)
