@@ -1,4 +1,11 @@
 # Calcite
+![License](https://img.shields.io/github/license/YazRaso/Calcite)
+![Last Commit](https://img.shields.io/github/last-commit/YazRaso/Calcite)
+![Issues](https://img.shields.io/github/issues/YazRaso/Calcite)
+![Version](https://img.shields.io/badge/version-v1.0.0-blue)
+![Python](https://img.shields.io/badge/python-3.9-blue)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
+
 
 > 🧮 Like Copilot, but for bookkeeping.  
 > A local-first, AI agent that writes transactions and generates receipts, with heavy emphasis on user privacy.
