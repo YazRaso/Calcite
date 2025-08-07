@@ -48,17 +48,23 @@ chmod u+x ./start.sh
 ```
 
 ---
-## 🐳 Docker build fail?
-The build may fail on some systems due to relative paths on the provided .env file
-Create a .env file in the ```Calcite/docker``` directory
-1. set the following paths BOT_PATH, ACTIONS_PATH, CORE_PATH, SHEET_PATH to their absolute paths on your machine.
-
 ## 😄 Welcome to Calcite
 Upload your name and signature (displayed on receipts)
 
 ## 🛝 Play around
 Select a file to work on or use the provided blank spreadsheet "TestBook.xlsx"
 Go ahead, try to add and delete a few transactions, generate receipts!
+
+---
+## 🐳 Docker build fail?
+The build may fail on some systems due to relative paths on the provided .env file
+Create a .env file in the ```Calcite/docker``` directory
+1. set the following paths BOT_PATH, ACTIONS_PATH, CORE_PATH, SHEET_PATH to their absolute paths on your machine.
+---
+## ✉️ Want to suggest a feature or encountered a bug?
+Do not hesistate to contact me if you have a specific feature in mind or have encountered, I am more than happy to help you personally, email: raso8856@mylaurier.ca
+
+
 
 
 
