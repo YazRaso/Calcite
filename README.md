@@ -58,6 +58,52 @@ chmod u+x ./start.sh
 ## 😄 Welcome to Calcite
 Upload your name and signature (displayed on receipts)
 
+## ⚙️ Usage
+
+### 📝 Worksheet Selection
+
+Before performing any actions, select a worksheet.  
+> 📌 **Important:** Worksheets **must** be inside the `sheet_data/` directory.
+
+---
+
+### ➕ Adding a Transaction
+
+To add a transaction, the following fields are required:
+
+- `Amount`
+- `Currency`
+- `Date`
+- `Exchange Rate`
+- `Reference ID`
+
+> ⚠️ **Note:** The `Reference` field **must be spelled exactly** as `Reference` in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
+
+---
+
+### ❌ Deleting a Transaction
+
+To delete a transaction, you only need:
+
+- `Reference ID`
+
+> The app will locate and remove the transaction based on the matching `Reference` field.
+
+> ⚠️ **Note:** The `Reference` field **must be spelled exactly** as `Reference` in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
+
+---
+
+### 🧾 Receipt Generation
+
+To generate a receipt for a transaction, provide:
+
+- `Reference ID`
+
+> ⚠️ **Note:** The `Reference` field **must be spelled exactly** as `Reference` in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
+
+> Calcite will fetch the transaction by Reference ID and produce a receipt.
+
+
 ## 🛝 Play around
 Select a file to work on or use the provided blank spreadsheet "TestBook.xlsx"
 Go ahead, try to add and delete a few transactions, generate receipts!
