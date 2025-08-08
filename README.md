@@ -123,6 +123,9 @@ Create a .env file in the ```Calcite/docker``` directory
 ## ✉️ Want to suggest a feature or encountered a bug?
 Do not hesistate to contact me if you have a specific feature in mind or have encountered, I am more than happy to help you personally, email: raso8856@mylaurier.ca
 
+## 👀 Check my site: https://yazraso.github.io/portfolio-site/
+Have a specific idea outside of Calcite or just want to chat? Head over to my site  
+
 
 
 
