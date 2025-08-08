@@ -108,10 +108,17 @@ Select a file to work on or use the provided blank spreadsheet "TestBook.xlsx"
 Go ahead, try to add and delete a few transactions, generate receipts!
 
 ---
+## 💡 Tips and Troubleshooting
+## 💡 TIP: Make sure your signature is in .PNG format ensuring quality and compatibility
 ## 🐳 Docker build fail?
 The build may fail on some systems due to relative paths on the provided .env file
 Create a .env file in the ```Calcite/docker``` directory
 1. set the following paths BOT_PATH, ACTIONS_PATH, CORE_PATH, SHEET_PATH to their absolute paths on your machine.
+## 🤔 Want to change signature or name
+1. (I want to make my changes using the GUI) In ```config/config.json``` set ```["user"]["firstTime"] = True```
+2. (I want to make my changes manually) In ```config/config.json``` set ```["user"]["name"] = <new_name>```, ```["user"]["signaturePath"] = <new_signature>```
+> ⚠️ **Note:** Restart the application after making your changes
+
 ---
 ## ✉️ Want to suggest a feature or encountered a bug?
 Do not hesistate to contact me if you have a specific feature in mind or have encountered, I am more than happy to help you personally, email: raso8856@mylaurier.ca
