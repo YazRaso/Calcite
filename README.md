@@ -63,7 +63,7 @@ Upload your name and signature (displayed on receipts)
 ### 📝 Worksheet Selection
 
 Before performing any actions, select a worksheet.  
-> 📌 **Important:** Worksheets **must** be inside the `sheet_data/` directory.
+> 📌 **Important:** Worksheets **must** be descendants of the `sheet_data/` directory.
 
 ---
 
