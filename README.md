@@ -108,8 +108,7 @@ Select a file to work on or use the provided blank spreadsheet "TestBook.xlsx"
 Go ahead, try to add and delete a few transactions, generate receipts!
 
 ---
-## 💡 Tips and Troubleshooting
-## 💡 TIP: Make sure your signature is in .PNG format ensuring quality and compatibility
+## 💡 Tip: Make sure your signature is in .PNG format ensuring quality and compatibility
 ## 🐳 Docker build fail?
 The build may fail on some systems due to relative paths on the provided .env file
 Create a .env file in the ```Calcite/docker``` directory
