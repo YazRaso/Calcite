@@ -26,10 +26,9 @@ and updates your Excel file, generates a receipt image — all processed locally
 ## 🔧 Features
 
 - 🧠 Intent parsing with Rasa and Duckling
-- 🗣️ Voice command support using OpenAI Whisper
 - 🧾 Excel transaction management via `openpyxl`
 - 🖼️ Receipt image generation with `Pillow`
-- 🖥️ Desktop GUI built using PyQt5
+- 🖥️ Desktop GUI built using PySide6 (Qt)
 - 🐳 Dockerized deployment
 - ✅ CI integration with GitHub Actions
 
