@@ -77,7 +77,7 @@ To add a transaction, the following fields are required:
 - `Exchange Rate`
 - `Reference ID`
 
-> ⚠️ **Note:** The `Reference` field **must be spelled ** as `Reference` (case insensitive) in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
+> ⚠️ **Note:** The `Reference` field **must be spelled** as `Reference` (case insensitive) in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
 
 ---
 
@@ -89,7 +89,7 @@ To delete a transaction, you only need:
 
 > The app will locate and remove the transaction based on the matching `Reference` field.
 
-> ⚠️ **Note:** The `Reference` field **must be spelled ** as `Reference` (case insensitive) in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
+> ⚠️ **Note:** The `Reference` field **must be spelled** as `Reference` (case insensitive) in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
 
 ---
 
@@ -99,7 +99,7 @@ To generate a receipt for a transaction, provide:
 
 - `Reference ID`
 
-> ⚠️ **Note:** The `Reference` field **must be spelled ** as `Reference` (case insensitive) in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
+> ⚠️ **Note:** The `Reference` field **must be spelled** as `Reference` (case insensitive) in the worksheet. After entering the Reference ID, make sure to press **space** to confirm the input.
 
 > Calcite will fetch the transaction by Reference ID and produce a receipt.
 
